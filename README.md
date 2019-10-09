@@ -7,7 +7,7 @@ The task that the plugin solves is to help keep the list of computers up to date
 
 ## Documentation
 
-This plugin is documented [here](https://github.com/akm77/ldapcomputers/wiki).
+This plugin is documented [here](https://github.com/akm77/ldapcomputers/wiki)
 
 ## Installation
 
@@ -25,7 +25,7 @@ git clone https://github.com/akm77/ldapcomputers.git ldapcomputers
 
 ## Документация
 
-Документация к плагину [здесь](https://github.com/pluginsGLPI/glpi-example-plugin/wiki).
+Документация к плагину [здесь](https://github.com/pluginsGLPI/glpi-example-plugin/wiki)
 
 ## Установка
 
