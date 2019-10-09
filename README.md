@@ -3,7 +3,7 @@
 ## Introduction
 
 This plugin is designed to get a list of computers from LDAP for further reconciliation with a list of computers in GLPI.
-The task that the plugin solves is to help keep the list of computers up to date in both LDAP and GLPI
+The task that the plugin solves is to help keep the list of computers up to date in both LDAP and GLPI.
 
 ## Documentation
 
