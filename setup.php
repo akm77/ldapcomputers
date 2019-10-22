@@ -1,32 +1,32 @@
 <?php
 /*
  -------------------------------------------------------------------------
- ldapcomputernew plugin for GLPI
- Copyright (C) 2019 by the ldapcomputernew Development Team.
+ ldapcomputers plugin for GLPI
+ Copyright (C) 2019 by the ldapcomputers Development Team.
 
- https://github.com/pluginsGLPI/ldapcomputernew
+ https://github.com/pluginsGLPI/ldapcomputers
  -------------------------------------------------------------------------
 
  LICENSE
 
- This file is part of ldapcomputernew.
+ This file is part of ldapcomputers.
 
- ldapcomputernew is free software; you can redistribute it and/or modify
+ ldapcomputers is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
 
- ldapcomputernew is distributed in the hope that it will be useful,
+ ldapcomputers is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with ldapcomputernew. If not, see <http://www.gnu.org/licenses/>.
+ along with ldapcomputers. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_LDAPCOMPUTERNEW_VERSION', '0.0.1');
+define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.1');
 
 /**
  * Init hooks of the plugin.
@@ -34,10 +34,10 @@ define('PLUGIN_LDAPCOMPUTERNEW_VERSION', '0.0.1');
  *
  * @return void
  */
-function plugin_init_ldapcomputernew() {
+function plugin_init_ldapcomputers() {
    global $PLUGIN_HOOKS;
 
-   $PLUGIN_HOOKS['csrf_compliant']['ldapcomputernew'] = true;
+   $PLUGIN_HOOKS['csrf_compliant']['ldapcomputers'] = true;
 }
 
 
@@ -47,11 +47,11 @@ function plugin_init_ldapcomputernew() {
  *
  * @return array
  */
-function plugin_version_ldapcomputernew() {
+function plugin_version_ldapcomputers() {
    return [
-      'name'           => 'ldapcomputernew',
-      'version'        => PLUGIN_LDAPCOMPUTERNEW_VERSION,
-      'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
+      'name'           => 'ldapcomputers',
+      'version'        => PLUGIN_LDAPCOMPUTERS_VERSION,
+      'author'         => '<a href="https://github.com/akm77/ldapcomputers>Aleksey Kotryakhov</a>',
       'license'        => '',
       'homepage'       => '',
       'requirements'   => [
@@ -68,7 +68,7 @@ function plugin_version_ldapcomputernew() {
  *
  * @return boolean
  */
-function plugin_ldapcomputernew_check_prerequisites() {
+function plugin_ldapcomputers_check_prerequisites() {
 
    //Version check is not done by core in GLPI < 9.2 but has to be delegated to core in GLPI >= 9.2.
    $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
@@ -86,13 +86,13 @@ function plugin_ldapcomputernew_check_prerequisites() {
  *
  * @return boolean
  */
-function plugin_ldapcomputernew_check_config($verbose = false) {
+function plugin_ldapcomputers_check_config($verbose = false) {
    if (true) { // Your configuration check
       return true;
    }
 
    if ($verbose) {
-      echo __('Installed / not configured', 'ldapcomputernew');
+      echo __('Installed / not configured', 'ldapcomputers');
    }
    return false;
 }
