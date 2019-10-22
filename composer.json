@@ -1,6 +1,5 @@
 {
     "require-dev": {
-        "glpi-project/tools": "^0.1",
         "squizlabs/php_codesniffer": "^3.5"
     },
     "config": {
@@ -15,5 +14,8 @@
         "type":"composer",
         "url":"http://packagist.org"
         }
-    ]
+    ],
+    "require": {
+        "glpi-project/tools": "^0.1.8"
+    }
 }

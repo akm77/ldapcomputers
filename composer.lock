@@ -4,9 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e52251e1148493ee08fbd0cbeb0a795",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "1f3a31b4e61a95b185ffac36af14826a",
+    "packages": [
         {
             "name": "consolidation/annotated-command",
             "version": "2.8.4",
@@ -426,16 +425,16 @@
         },
         {
             "name": "glpi-project/tools",
-            "version": "0.1.5",
+            "version": "0.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/glpi-project/tools.git",
-                "reference": "5ff99fa5967b468af3d3ba2d7a69ede1214273ea"
+                "reference": "39ca503a00454e6c5d7d97bd8baff358d262a897"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glpi-project/tools/zipball/5ff99fa5967b468af3d3ba2d7a69ede1214273ea",
-                "reference": "5ff99fa5967b468af3d3ba2d7a69ede1214273ea",
+                "url": "https://api.github.com/repos/glpi-project/tools/zipball/39ca503a00454e6c5d7d97bd8baff358d262a897",
+                "reference": "39ca503a00454e6c5d7d97bd8baff358d262a897",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +471,7 @@
                 "plugins",
                 "tools"
             ],
-            "time": "2018-06-21T11:59:33+00:00"
+            "time": "2019-06-07T09:46:17+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -1380,6 +1379,7 @@
             "time": "2018-05-03T23:18:14+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
