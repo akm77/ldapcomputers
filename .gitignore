@@ -1,5 +1,6 @@
 dist/
 vendor/
+/.vscode/
 .gh_token
 *.min.*
 
