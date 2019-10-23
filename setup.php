@@ -43,7 +43,7 @@ define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.1');
 // Minimal GLPI version, inclusive
 define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
 // Maximum GLPI version, exclusive
-define('PLUGIN_LDAPCOMPUTERS_MAX_GLPI', '9.4');
+define('PLUGIN_LDAPCOMPUTERS_MAX_GLPI', '9.5');
 
 /**
  * Init hooks of the plugin.
@@ -93,11 +93,11 @@ function plugin_ldapcomputers_check_prerequisites() {
    echo $version;
    if (version_compare($version, '9.2', '<')) {
       $matchMinGlpiReq = version_compare($version, PLUGIN_LDAPCOMPUTERS_MIN_GLPI, '>=');
-      $matchMaxGlpiReq = version_compare($version, PLUGIN_LDAPCOMPUTERS_MAX_GLPI, '<=');
+      $matchMaxGlpiReq = version_compare($version, PLUGIN_LDAPCOMPUTERS_MAX_GLPI, '<');
 
       if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
          echo vsprintf(
-            'This plugin requires GLPI >= %1$s and <= %2$s. Current version is %3$s.',
+            'This plugin requires GLPI >= %1$s and < %2$s. Current version is %3$s.',
             [
                PLUGIN_LDAPCOMPUTERS_MIN_GLPI,
                PLUGIN_LDAPCOMPUTERS_MAX_GLPI,
