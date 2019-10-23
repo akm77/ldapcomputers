@@ -23,10 +23,27 @@
 
  You should have received a copy of the GNU General Public License
  along with LDAP computers. If not, see <http://www.gnu.org/licenses/>.
+
+------------------------------------------------------------------------
+
+   @package   Plugin LDAP Computers
+   @author    Aleksey Kotryakhov
+   @co-author
+   @copyright Copyright (c) 2009-2016 Barcode plugin Development team
+   @license   AGPL License 3.0 or (at your option) any later version
+              http://www.gnu.org/licenses/agpl-3.0-standalone.html
+   @link      https://github.com/akm77/ldapcomputers
+   @since     2019
+
+
  --------------------------------------------------------------------------
  */
 
 define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.1');
+// Minimal GLPI version, inclusive
+define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
+// Maximum GLPI version, exclusive
+define('PLUGIN_LDAPCOMPUTERS_MAX_GLPI', '9.4');
 
 /**
  * Init hooks of the plugin.
@@ -52,11 +69,12 @@ function plugin_version_ldapcomputers() {
       'name'           => 'LDAP computers',
       'version'        => PLUGIN_LDAPCOMPUTERS_VERSION,
       'author'         => '<a href="https://github.com/akm77/ldapcomputers">Aleksey Kotryakhov</a>',
-      'license'        => '',
-      'homepage'       => '',
+      'license'        => 'AGPLv3+',
+      'homepage'       => '<a href="https://github.com/akm77/ldapcomputers">Github</a>',
       'requirements'   => [
          'glpi' => [
-            'min' => '9.2',
+            'min' => PLUGIN_LDAPCOMPUTERS_MIN_GLPI,
+            'max' => PLUGIN_LDAPCOMPUTERS_MAX_GLPI,
          ]
       ]
    ];
@@ -73,8 +91,19 @@ function plugin_ldapcomputers_check_prerequisites() {
    //Version check is not done by core in GLPI < 9.2 but has to be delegated to core in GLPI >= 9.2.
    $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
    if (version_compare($version, '9.2', '<')) {
-      echo "This plugin requires GLPI >= 9.2";
-      return false;
+      $matchMinGlpiReq = version_compare($version, PLUGIN_LDAPCOMPUTERS_MIN_GLPI, '>=');
+      $matchMaxGlpiReq = version_compare($version, PLUGIN_LDAPCOMPUTERS_MAX_GLPI, '<');
+
+      if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
+         echo vsprintf(
+            'This plugin requires GLPI >= %1$s and < %2$s.',
+            [
+               PLUGIN_LDAPCOMPUTERS_MIN_GLPI,
+               PLUGIN_LDAPCOMPUTERS_MAX_GLPI,
+            ]
+         );
+         return false;
+      }
    }
    return true;
 }
