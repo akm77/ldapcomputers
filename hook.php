@@ -38,15 +38,56 @@ function plugin_ldapcomputers_install() {
 
    //Create config table only if it does not exists yet!
    if (!$DB->tableExists('glpi_plugin_ldapcomputers_configs')) {
-      $query = '';
+      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_configs` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `host` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `basedn` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `rootdn` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `port` int(11) NOT NULL DEFAULT 389,
+                  `condition` text COLLATE utf8_unicode_ci,
+                  `use_tls` tinyint(1) NOT NULL DEFAULT 0,
+                  `use_dn` tinyint(1) NOT NULL DEFAULT 1,
+                  `time_offset` int(11) NOT NULL DEFAULT 0,
+                  `deref_option` int(11) NOT NULL DEFAULT 0,
+                  `entity_condition` text COLLATE utf8_unicode_ci,
+                  `date_mod` datetime DEFAULT NULL,
+                  `comment` text COLLATE utf8_unicode_ci,
+                  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+                  `is_active` tinyint(1) NOT NULL DEFAULT 0,
+                  `rootdn_passwd` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `pagesize` int(11) NOT NULL DEFAULT 0,
+                  `ldap_maxlimit` int(11) NOT NULL DEFAULT 0,
+                  `can_support_pagesize` tinyint(1) NOT NULL DEFAULT 0,
+                  `date_creation` datetime DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `date_mod` (`date_mod`),
+                  KEY `is_default` (`is_default`),
+                  KEY `is_active` (`is_active`),
+                  KEY `date_creation` (`date_creation`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
 
    //Create computers table only if it does not exists yet!
    if (!$DB->tableExists('glpi_plugin_ldapcomputers_computers')) {
-      $query = '';
+      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_computers` (
+                  `id` int(11) NOT NULL,
+                  `name` varchar(255) NOT NULL,
+                  `lastLogon` datetime NOT NULL,
+                  `logonCount` int(11) NOT NULL,
+                  `distinguishedName` text NOT NULL,
+                  `ldap_status` tinyint(4) NOT NULL DEFAULT 0,
+                  `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
+                  `date_creation` datetime NOT NULL,
+                  `date_mod` datetime NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `date_mod` (`date_mod`),
+                  KEY `name` (`name`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
+
    /* Placeholder for further update process in future
    if (!$DB->tableExists('glpi_plugin_ldapcomputers_configs')) {
       $query = '';
