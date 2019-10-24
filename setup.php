@@ -55,6 +55,9 @@ function plugin_init_ldapcomputers() {
    global $PLUGIN_HOOKS;
 
    $PLUGIN_HOOKS['csrf_compliant']['ldapcomputers'] = true;
+
+   $Plugin = new Plugin();
+   // $Plugin->registerClass()
 }
 
 
