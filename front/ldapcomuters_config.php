@@ -46,4 +46,5 @@ Session::checkRight("config", READ);
 Html::header(AuthLDAP::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'config', 'auth', 'ldap');
 
 Search::show('AuthLDAP');
+
 Html::footer();
