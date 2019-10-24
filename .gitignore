@@ -3,4 +3,4 @@ vendor/
 /.vscode/
 .gh_token
 *.min.*
-
+.code-workspace.code-workspace
