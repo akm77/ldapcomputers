@@ -119,8 +119,7 @@ function plugin_ldapcomputers_uninstall() {
       //Drop table only if it does not exists yet!
       if ($DB->tableExists($tablename)) {
          $DB->queryOrDie(
-            "DROP TABLE `$tablename`",
-            $DB->error()
+            "DROP TABLE `$tablename`", $DB->error()
          );
       }
    }
