@@ -34,7 +34,7 @@
 function plugin_ldapcomputers_install() {
    global $DB;
 
-   $migration = new Migration(PLUGIN_BARCODE_VERSION);
+   $migration = new Migration(PLUGIN_LDAPCOMPUTERS_VERSION);
 
    //Create config table only if it does not exists yet!
    if (!$DB->tableExists('glpi_plugin_ldapcomputers_configs')) {
