@@ -38,7 +38,6 @@
 
  --------------------------------------------------------------------------
  */
-
 define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.1');
 // Minimal GLPI version, inclusive
 define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
@@ -56,8 +55,13 @@ function plugin_init_ldapcomputers() {
 
    $PLUGIN_HOOKS['csrf_compliant']['ldapcomputers'] = true;
 
-   $Plugin = new Plugin();
-   // $Plugin->registerClass()
+   if (!Plugin::registerClass('PluginLdapcomputersConfig')) {
+      Toolbox::logInFile('regplug', 'Fail PluginLDAPcomputersConfig ');
+   }
+   if (!Plugin::registerClass('PluginLdapcomputersLdapcomputers')) {
+      Toolbox::logInFile('regplug', 'Fail PluginLDAPcomputersLDAPcomputers ');
+   }
+
 }
 
 
