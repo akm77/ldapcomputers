@@ -55,13 +55,12 @@ function plugin_init_ldapcomputers() {
 
    $PLUGIN_HOOKS['csrf_compliant']['ldapcomputers'] = true;
 
-   if (!Plugin::registerClass('PluginLdapcomputersConfig')) {
-      Toolbox::logInFile('regplug', 'Fail PluginLDAPcomputersConfig ');
+   if (isset($_SESSION['glpiactiveentities'])) {
+      // add link in plugin page
+      $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
+      // add entry to configuration menu
+      $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers'] = ['config' => 'PluginLdapcomputersMenu'];
    }
-   if (!Plugin::registerClass('PluginLdapcomputersLdapcomputers')) {
-      Toolbox::logInFile('regplug', 'Fail PluginLDAPcomputersLDAPcomputers ');
-   }
-
 }
 
 
