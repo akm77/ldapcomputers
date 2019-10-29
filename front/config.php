@@ -40,23 +40,10 @@
  */
 include ('../../../inc/includes.php');
 
-// Check if plugin is activated...
-$plugin = new Plugin();
+Session::checkRight("plugin_ldapcomputers", READ);
 
-if (!$plugin->isInstalled('ldapcomputers') || !$plugin->isActivated('ldapcomputers')) {
-   Html::displayNotFoundError();
-}
+Html::header(PluginLdapcomputersConfig::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'config', 'auth', 'ldap');
 
-//check for ACLs
-   //Add page header
-   Html::header(
-     __('My example plugin', 'myexampleplugin'),
-     $_SERVER['PHP_SELF'],
-     'assets',
-     'pluginmyexamplemyobject',
-     'myobject'
-   );
+Search::show('PluginLdapcomputersConfig');
 
-   Search::show('PluginLdapcomputersConfig');
-
-   Html::footer();
+Html::footer();
