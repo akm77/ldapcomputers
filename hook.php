@@ -45,14 +45,13 @@ function plugin_ldapcomputers_install() {
                   `basedn` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
                   `rootdn` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
                   `port` int(11) NOT NULL DEFAULT 389,
-                  `condition` text COLLATE utf8_unicode_ci,
+                  `condition` text COLLATE utf8_unicode_ci DEFAULT NULL,
                   `use_tls` tinyint(1) NOT NULL DEFAULT 0,
                   `use_dn` tinyint(1) NOT NULL DEFAULT 1,
-                  `time_offset` int(11) NOT NULL DEFAULT 0,
+                  `time_offset` int(11) NOT NULL DEFAULT 0 COMMENT "in seconds",
                   `deref_option` int(11) NOT NULL DEFAULT 0,
-                  `entity_condition` text COLLATE utf8_unicode_ci,
                   `date_mod` datetime DEFAULT NULL,
-                  `comment` text COLLATE utf8_unicode_ci,
+                  `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
                   `is_default` tinyint(1) NOT NULL DEFAULT 0,
                   `is_active` tinyint(1) NOT NULL DEFAULT 0,
                   `rootdn_passwd` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -66,6 +65,19 @@ function plugin_ldapcomputers_install() {
                   KEY `is_active` (`is_active`),
                   KEY `date_creation` (`date_creation`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
+      $DB->queryOrDie($query, $DB->error());
+   }
+
+   //Create backup ldaps table only if it does not exists yet!
+   if (!$DB->tableExists('glpi_plugin_ldapcomputers_ldap_backups')) {
+      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_ldap_backups` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `primary_ldap_id` int(11) NOT NULL DEFAULT 0,
+                  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `host` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `port` int(11) NOT NULL DEFAULT 389,
+                  PRIMARY KEY (`id`)
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
 
@@ -111,7 +123,8 @@ function plugin_ldapcomputers_uninstall() {
 
    $tables = [
       'configs',
-      'computers'
+      'computers',
+      'backup_ldaps',
    ];
 
    foreach ($tables as $table) {
