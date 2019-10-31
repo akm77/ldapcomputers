@@ -110,6 +110,8 @@ function plugin_ldapcomputers_install() {
    //execute the whole migration
    $migration->executeMigration();
 
+   PluginLdapcomputersProfile::initProfile();
+
    return true;
 }
 
@@ -136,5 +138,8 @@ function plugin_ldapcomputers_uninstall() {
          );
       }
    }
+
+   PluginLdapcomputersProfile::removeRights();
+
    return true;
 }

@@ -55,6 +55,10 @@ function plugin_init_ldapcomputers() {
 
    $PLUGIN_HOOKS['csrf_compliant']['ldapcomputers'] = true;
 
+   /* Init current profile */
+   Plugin::registerClass('PluginLdapcomputersProfile', ['addtabon' => ['Profile']]);
+   $PLUGIN_HOOKS['change_profile']['ldapcomputers'] = ['PluginLdapcomputersProfile', 'initProfile'];
+
    if (isset($_SESSION['glpiactiveentities'])) {
       // add link in plugin page
       $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
