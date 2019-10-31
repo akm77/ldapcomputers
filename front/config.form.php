@@ -64,7 +64,7 @@ if (isset($_POST["update"])) {
             Session::addMessageAfterRedirect(__('Test failed'), false, ERROR);
             GlpiNetwork::addErrorMessageAfterRedirect();
          }
-         Html::redirect($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/front/config.php?next=extauth_ldap&id=".$newID);
+         Html::redirect($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/front/config.php?next=ext_ldap&id=".$newID);
       }
    }
    Html::back();
@@ -91,29 +91,29 @@ if (isset($_POST["update"])) {
    }
    Html::back();
 
-} else if (isset($_POST["test_ldap_replicate"])) {
-   $replicate = new PluginLdapcomputersConfigbackupldap();
-   $replicate->getFromDB($_POST["ldap_replicate_id"]);
+} else if (isset($_POST["test_ldap_backup"])) {
+   $backup_ldap = new PluginLdapcomputersConfigbackupldap();
+   $backup_ldap->getFromDB($_POST["ldap_backup_id"]);
 
-   if (PluginLdapcomputersConfig::testLDAPConnection($_POST["id"], $_POST["ldap_replicate_id"])) {
+   if (PluginLdapcomputersConfig::testLDAPConnection($_POST["id"], $_POST["ldap_backup_id"])) {
                                        //TRANS: %s is the description of the test
       $_SESSION["LDAP_TEST_MESSAGE"] = sprintf(__('Test successful: %s'),
                                                //TRANS: %s is the name of the LDAP replica server
-                                               sprintf(__('Replicate %s'), $replicate->fields["name"]));
+                                               sprintf(__('Replicate %s'), $backup_ldap->fields["name"]));
    } else {
                                         //TRANS: %s is the description of the test
       $_SESSION["LDAP_TEST_MESSAGE"] = sprintf(__('Test failed: %s'),
                                                //TRANS: %s is the name of the LDAP replica server
-                                               sprintf(__('Replicate %s'), $replicate->fields["name"]));
+                                               sprintf(__('Replicate %s'), $backup_ldap->fields["name"]));
       GLPINetwork::addErrorMessageAfterRedirect();
    }
    Html::back();
 
-} else if (isset($_POST["add_replicate"])) {
-   $replicate = new PluginLdapcomputersConfigbackupldap();
+} else if (isset($_POST["add_backup_ldap"])) {
+   $backup_ldap = new PluginLdapcomputersConfigbackupldap();
    unset($_POST["next"]);
    unset($_POST["id"]);
-   $replicate->add($_POST);
+   $backup_ldap->add($_POST);
    Html::back();
 }
 
