@@ -40,7 +40,7 @@
  */
 class PluginLdapcomputersProfile extends Profile {
 
-   static $rightname = 'plugin_ldapcomputers_config';
+   static $rightname = 'config';
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
       if ($item->getID() > 0
@@ -101,7 +101,7 @@ class PluginLdapcomputersProfile extends Profile {
 
    function getAllRights() {
       $a_rights = [
-          ['rights'    => [UPDATE  => __('Update')],
+          ['rights'    => [READ => __('Read'), UPDATE  => __('Update')],
                 'label'     => __('Manage configuration', 'ldapcomputers'),
                 'field'     => 'plugin_ldapcomputers_config'
           ],
@@ -134,7 +134,7 @@ class PluginLdapcomputersProfile extends Profile {
     * @param $profiles_id  integer
     */
    static function createFirstAccess($profiles_id) {
-      //include_once(GLPI_ROOT."/plugins/barcode/inc/profile.class.php");
+
       $profile = new self();
       foreach ($profile->getAllRights() as $right) {
          self::addDefaultProfileInfos($profiles_id,
