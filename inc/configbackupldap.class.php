@@ -50,6 +50,10 @@ class PluginLdapcomputersConfigbackupldap extends CommonDBTM {
 
    static $rightname = 'plugin_ldapcomputers_config';
 
+   function __construct() {
+      $this->table = "glpi_plugin_ldapcomputers_ldap_backups";
+   }
+
    static function canCreate() {
       return static::canUpdate();
    }
