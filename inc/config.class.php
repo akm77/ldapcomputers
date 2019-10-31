@@ -48,6 +48,9 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginLdapcomputersConfig extends CommonDBTM {
 
+   const SIMPLE_INTERFACE = 'simple';
+   const EXPERT_INTERFACE = 'expert';
+
    // From CommonDBTM
    public $dohistory = true;
 
@@ -56,8 +59,12 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    //connection caching stuff
    static $conn_cache = [];
 
+   function __construct() {
+      $this->table = "glpi_plugin_ldapcomputers_configs";
+   }
+
    static function getTypeName($nb = 0) {
-         return _n('LDAP computers', 'LDAP computers', $nb);
+      return _n('LDAP directory', 'LDAP directories', $nb);
    }
 
    static function canCreate() {
@@ -69,7 +76,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    function post_getEmpty() {
-
       $this->fields['port']                        = '389';
       $this->fields['condition']                   = '';
       $this->fields['use_tls']                     = 0;
@@ -89,39 +95,33 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return void
     */
    function preconfig($type) {
-
       switch ($type) {
          case 'AD' :
-            $this->fields['port']                 = "389";
+            $this->fields['port']                      = "389";
             $this->fields['condition']
-               = '(&(&(&(samAccountType=805306369)(!(primaryGroupId=516)))
-                  (objectCategory=computer)(!(operatingSystem=Windows Server*))))';
-            $this->fields['use_tls']              = 0;
-            $this->fields['use_dn']               = 1;
-            $this->fields['can_support_pagesize'] = 1;
-            $this->fields['pagesize']             = '1000';
+               = '(&(&(&(samAccountType=805306369)(!(primaryGroupId=516)))(objectCategory=computer)(!(operatingSystem=Windows Server*))))';
+            $this->fields['use_tls']                   = 0;
+            $this->fields['use_dn']                    = 1;
+            $this->fields['can_support_pagesize']      = 1;
+            $this->fields['pagesize']                  = '1000';
             break;
-
          default:
             $this->post_getEmpty();
       }
    }
 
    function prepareInputForUpdate($input) {
-
       if (isset($input["rootdn_passwd"])) {
          if (empty($input["rootdn_passwd"])) {
             unset($input["rootdn_passwd"]);
          } else {
             $input["rootdn_passwd"] = Toolbox::encrypt(stripslashes($input["rootdn_passwd"]),
-                                                          GLPIKEY);
+                                                       GLPIKEY);
          }
       }
-
       if (isset($input["_blank_passwd"]) && $input["_blank_passwd"]) {
          $input['rootdn_passwd'] = '';
       }
-
       // Set attributes in lower case
       if (count($input)) {
          foreach ($input as $key => $val) {
@@ -130,10 +130,31 @@ class PluginLdapcomputersConfig extends CommonDBTM {
             }
          }
       }
+      return $input;
+   }
+
+   static function getSpecificValueToDisplay($field, $values, array $options = []) {
+      if (!is_array($values)) {
+         $values = [$field => $values];
+      }
+      return parent::getSpecificValueToDisplay($field, $values, $options);
+   }
+
+   static function getSpecificValueToSelect($field, $name = '', $values = '', array $options = []) {
+      if (!is_array($values)) {
+         $values = [$field => $values];
+      }
+      $options['display'] = false;
+      return parent::getSpecificValueToSelect($field, $name, $values, $options);
+   }
+
+   static function processMassiveActionsForOneItemtype(MassiveAction $ma, CommonDBTM $item, array $ids) {
+      $input = $ma->getInput();
+      parent::processMassiveActionsForOneItemtype($ma, $item, $ids);
    }
 
    /**
-    * Print the ldapcomputers config form
+    * Print the config ldap form
     *
     * @param integer $ID      ID of the item
     * @param array   $options Options
@@ -142,7 +163,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return void (display)
     */
    function showForm($ID, $options = []) {
-
       if (!Config::canUpdate()) {
          return false;
       }
@@ -154,7 +174,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       } else {
          $this->getFromDB($ID);
       }
-
       if (Toolbox::canUseLdap()) {
          $this->showFormHeader($options);
          if (empty($ID)) {
@@ -174,7 +193,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
             echo "<td colspan='2'>&nbsp;";
          }
          echo "</td></tr>";
-
          $defaultrand = mt_rand();
          echo "<tr class='tab_bg_1'><td><label for='dropdown_is_default$defaultrand'>" . __('Default server') . "</label></td>";
          echo "<td>";
@@ -185,29 +203,24 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo "<td>";
          Dropdown::showYesNo('is_active', $this->fields['is_active'], -1, ['rand' => $activerand]);
          echo "</td></tr>";
-
          echo "<tr class='tab_bg_1'><td><label for='host'>" . __('Server') . "</label></td>";
          echo "<td><input type='text' id='host' name='host' value='" . $this->fields["host"] . "'></td>";
          echo "<td><label for='port'>" . __('Port (default=389)') . "</label></td>";
          echo "<td><input id='port' type='text' id='port' name='port' value='".$this->fields["port"]."'>";
          echo "</td></tr>";
-
          echo "<tr class='tab_bg_1'><td><label for='condition'>" . __('Connection filter') . "</label></td>";
          echo "<td colspan='3'>";
          echo "<textarea cols='100' rows='1' id='condition' name='condition'>".$this->fields["condition"];
          echo "</textarea>";
          echo "</td></tr>";
-
          echo "<tr class='tab_bg_1'><td><label for='basedn'>" . __('BaseDN') . "</label></td>";
          echo "<td colspan='3'>";
          echo "<input type='text' id='basedn' name='basedn' size='100' value=\"".$this->fields["basedn"]."\">";
          echo "</td></tr>";
-
          echo "<tr class='tab_bg_1'><td><label for='rootdn'>" . __('RootDN (for non anonymous binds)') . "</label></td>";
          echo "<td colspan='3'><input type='text' name='rootdn' id='rootdn' size='100' value=\"".
                 $this->fields["rootdn"]."\">";
          echo "</td></tr>";
-
          echo "<tr class='tab_bg_1'><td><label for='rootdn_passwd'>" .
             __('Password (for non-anonymous binds)') . "</label></td>";
          echo "<td><input type='password' id='rootdn_passwd' name='rootdn_passwd' value='' autocomplete='off'>";
@@ -215,29 +228,22 @@ class PluginLdapcomputersConfig extends CommonDBTM {
             echo "<input type='checkbox' name='_blank_passwd' id='_blank_passwd'>&nbsp;"
                . "<label for='_blank_passwd'>" . __('Clear') . "</label>";
          }
-         echo "</td>";
-         echo "<td rowspan='3'><label for='comment'>".__('Comments')."</label></td>";
-         echo "<td rowspan='3' class='middle'>";
+         echo "</td></tr>";
+         echo "<tr class='tab_bg_1'>";
+         echo "<td><label for='comment'>".__('Comments')."</label></td>";
+         echo "<td class='middle'>";
          echo "<textarea cols='40' rows='4' name='comment' id='comment'>".$this->fields["comment"]."</textarea>";
          echo "</td></tr>";
-
-         echo ">";
-         echo "</td></tr>";
-
          //Fill fields when using preconfiguration models
          if (!$ID) {
             $hidden_fields = ['comment_field', 'condition', 'port', 'use_dn', 'use_tls'];
-
             foreach ($hidden_fields as $hidden_field) {
                echo "<input type='hidden' name='$hidden_field' value='".
                       $this->fields[$hidden_field]."'>";
             }
          }
-
          echo "</td></tr>";
-
          $this->showFormButtons($options);
-
       } else {
          echo "<div class='center'>&nbsp;<table class='tab_cadre_fixe'>";
          echo "<tr><th colspan='2'>" . self::getTypeName(1) . "</th></tr>";
@@ -245,10 +251,8 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo "<p class='red'>".sprintf(__('%s extension is missing'), 'LDAP')."</p>";
          echo "<p>".__('Impossible to use LDAP as external source of connection')."</p>".
               "</td></tr></table>";
-
          echo "<p><strong>".GLPINetwork::getErrorMessage()."</strong></p>";
          echo "</div>";
-
       }
    }
 
@@ -258,17 +262,13 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return void
     */
    function showFormAdvancedConfig() {
-
       $ID = $this->getField('id');
       $hidden = '';
-
       echo "<div class='center'>";
       echo "<form method='post' action='".Toolbox::getItemTypeFormURL(__CLASS__)."'>";
       echo "<table class='tab_cadre_fixe'>";
-
       echo "<tr class='tab_bg_2'><th colspan='4'>";
       echo "<input type='hidden' name='id' value='$ID'>". __('Advanced information')."</th></tr>";
-
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __('Use TLS') . "</td><td>";
       if (function_exists("ldap_start_tls")) {
@@ -280,7 +280,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       echo "<td>" . __('LDAP directory time zone') . "</td><td>";
       Dropdown::showGMT("time_offset", $this->fields["time_offset"]);
       echo"</td></tr>";
-
       if (self::isLdapPageSizeAvailable(false, false)) {
          echo "<tr class='tab_bg_1'>";
          echo "<td>" . __('Use paged results') . "</td><td>";
@@ -292,7 +291,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                                                 'max'   => 100000,
                                                 'step'  => 100]);
          echo"</td></tr>";
-
          echo "<tr class='tab_bg_1'>";
          echo "<td>" . __('Maximum number of results') . "</td><td>";
          Dropdown::showNumber('ldap_maxlimit', ['value' => $this->fields['ldap_maxlimit'],
@@ -301,13 +299,11 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                                                      'step'  => 100,
                                                      'toadd' => [0 => __('Unlimited')]]);
          echo "</td><td colspan='2'></td></tr>";
-
       } else {
          $hidden .= "<input type='hidden' name='can_support_pagesize' value='0'>";
          $hidden .= "<input type='hidden' name='pagesize' value='0'>";
          $hidden .= "<input type='hidden' name='ldap_maxlimit' value='0'>";
       }
-
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __('How LDAP aliases should be handled') . "</td><td colspan='4'>";
       $alias_options = [
@@ -319,15 +315,81 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       Dropdown::showFromArray("deref_option", $alias_options,
                               ['value' => $this->fields["deref_option"]]);
       echo"</td></tr>";
-
       echo "<tr class='tab_bg_2'><td class='center' colspan='4'>";
       echo "<input type='submit' name='update' class='submit' value=\"".__s('Save')."\">";
       echo $hidden;
       echo "</td></tr>";
-
       echo "</table>";
       Html::closeForm();
       echo "</div>";
+   }
+
+   /**
+    * Show config replicates form
+    *
+    * @var DBmysql $DB
+    *
+    * @return void
+    */
+   function showFormReplicatesConfig() {
+      global $DB;
+      $ID     = $this->getField('id');
+      $target = $this->getFormURL();
+      $rand   = mt_rand();
+      PluginLdapcomputersConfigbackupldap::addNewBackupLdapForm($target, $ID);
+      $iterator = $DB->request([
+         'FROM'   => 'glpi_plugin_ldapcomputers_ldap_backups',
+         'WHERE'  => [
+            'primary_ldap_id' => $ID
+         ],
+         'ORDER'  => ['name']
+      ]);
+      if (($nb = count($iterator)) > 0) {
+         echo "<br>";
+         echo "<div class='center'>";
+         Html::openMassiveActionsForm('massAuthLdapReplicate'.$rand);
+         $massiveactionparams = ['num_displayed' => min($_SESSION['glpilist_limit'], $nb),
+                                      'container'     => 'massAuthLdapReplicate'.$rand];
+         Html::showMassiveActions($massiveactionparams);
+         echo "<input type='hidden' name='id' value='$ID'>";
+         echo "<table class='tab_cadre_fixehov'>";
+         echo "<tr class='noHover'>".
+              "<th colspan='4'>".__('List of LDAP directory replicates') . "</th></tr>";
+         if (isset($_SESSION["LDAP_TEST_MESSAGE"])) {
+            echo "<tr class='tab_bg_2'><td class='center' colspan='4'>";
+            echo $_SESSION["LDAP_TEST_MESSAGE"];
+            echo"</td></tr>";
+            unset($_SESSION["LDAP_TEST_MESSAGE"]);
+         }
+         $header_begin   = "<tr>";
+         $header_top     = "<th>".Html::getCheckAllAsCheckbox('massAuthLdapReplicate'.$rand)."</th>";
+         $header_bottom  = "<th>".Html::getCheckAllAsCheckbox('massAuthLdapReplicate'.$rand)."</th>";
+         $header_end     = "<th class='center b'>".__('Name')."</th>";
+         $header_end    .= "<th class='center b'>"._n('Replicate', 'Replicates', 1)."</th>".
+              "<th class='center'></th></tr>";
+         echo $header_begin.$header_top.$header_end;
+         while ($ldap_replicate = $iterator->next()) {
+            echo "<tr class='tab_bg_1'><td class='center' width='10'>";
+            Html::showMassiveActionCheckBox('AuthLdapReplicate', $ldap_replicate["id"]);
+            echo "</td>";
+            echo "<td class='center'>" . $ldap_replicate["name"] . "</td>";
+            echo "<td class='center'>".sprintf(__('%1$s: %2$s'), $ldap_replicate["host"],
+                                               $ldap_replicate["port"]);
+            echo "</td>";
+            echo "<td class='center'>";
+            Html::showSimpleForm(static::getFormURL(),
+                                 'test_ldap_replicate', _sx('button', 'Test'),
+                                 ['id'                => $ID,
+                                       'ldap_replicate_id' => $ldap_replicate["id"]]);
+            echo "</td></tr>";
+         }
+         echo $header_begin.$header_bottom.$header_end;
+         echo "</table>";
+         $massiveactionparams['ontop'] = false;
+         Html::showMassiveActions($massiveactionparams);
+         Html::closeForm();
+         echo "</div>";
+      }
    }
 
    /**
@@ -336,23 +398,19 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return void
     */
    function showFormTestLDAP () {
-
       $ID = $this->getField('id');
-
       if ($ID > 0) {
          echo "<div class='center'>";
          echo "<form method='post' action='".Toolbox::getItemTypeFormURL(__CLASS__)."'>";
          echo "<input type='hidden' name='id' value='$ID'>";
          echo "<table class='tab_cadre_fixe'>";
          echo "<tr><th colspan='4'>" . __('Test of connection to LDAP directory') . "</th></tr>";
-
          if (isset($_SESSION["LDAP_TEST_MESSAGE"])) {
             echo "<tr class='tab_bg_2'><td class='center' colspan='4'>";
             echo $_SESSION["LDAP_TEST_MESSAGE"];
             echo"</td></tr>";
             unset($_SESSION["LDAP_TEST_MESSAGE"]);
          }
-
          echo "<tr class='tab_bg_2'><td class='center' colspan='4'>";
          echo "<input type='submit' name='test_ldap' class='submit' value=\"".
                 _sx('button', 'Test')."\">";
@@ -362,24 +420,21 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo "</div>";
       }
    }
-   function defineTabs($options = []) {
 
+   function defineTabs($options = []) {
       $ong = [];
       $this->addDefaultFormTab($ong);
       $this->addStandardTab(__CLASS__, $ong, $options);
       $this->addStandardTab('Log', $ong, $options);
-
       return $ong;
    }
 
    function rawSearchOptions() {
       $tab = [];
-
       $tab[] = [
          'id'                 => 'common',
          'name'               => $this->getTypeName(1)
       ];
-
       $tab[] = [
          'id'                 => '1',
          'table'              => $this->getTable(),
@@ -388,7 +443,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'datatype'           => 'itemlink',
          'massiveaction'      => false
       ];
-
       $tab[] = [
          'id'                 => '2',
          'table'              => $this->getTable(),
@@ -397,7 +451,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'datatype'           => 'number',
          'massiveaction'      => false
       ];
-
       $tab[] = [
          'id'                 => '3',
          'table'              => $this->getTable(),
@@ -405,7 +458,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'name'               => __('Server'),
          'datatype'           => 'string'
       ];
-
       $tab[] = [
          'id'                 => '4',
          'table'              => $this->getTable(),
@@ -413,7 +465,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'name'               => __('Port'),
          'datatype'           => 'integer'
       ];
-
       $tab[] = [
          'id'                 => '5',
          'table'              => $this->getTable(),
@@ -421,7 +472,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'name'               => __('BaseDN'),
          'datatype'           => 'string'
       ];
-
       $tab[] = [
          'id'                 => '6',
          'table'              => $this->getTable(),
@@ -429,7 +479,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'name'               => __('Connection filter'),
          'datatype'           => 'text'
       ];
-
       $tab[] = [
          'id'                 => '7',
          'table'              => $this->getTable(),
@@ -438,7 +487,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'datatype'           => 'bool',
          'massiveaction'      => false
       ];
-
       $tab[] = [
          'id'                 => '16',
          'table'              => $this->getTable(),
@@ -446,7 +494,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'name'               => __('Comments'),
          'datatype'           => 'text'
       ];
-
       $tab[] = [
          'id'                 => '18',
          'table'              => $this->getTable(),
@@ -455,7 +502,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'datatype'           => 'bool',
          'massiveaction'      => false
       ];
-
       $tab[] = [
          'id'                 => '19',
          'table'              => $this->getTable(),
@@ -464,7 +510,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'datatype'           => 'datetime',
          'massiveaction'      => false
       ];
-
       $tab[] = [
          'id'                 => '121',
          'table'              => $this->getTable(),
@@ -473,7 +518,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'datatype'           => 'datetime',
          'massiveaction'      => false
       ];
-
       $tab[] = [
          'id'                 => '30',
          'table'              => $this->getTable(),
@@ -481,7 +525,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'name'               => __('Active'),
          'datatype'           => 'bool'
       ];
-
       return $tab;
    }
 
@@ -493,11 +536,8 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return void
     */
    function showSystemInformations($width) {
-
       // No need to translate, this part always display in english (for copy/paste to forum)
-
       $ldap_servers = self::getLdapServers();
-
       if (!empty($ldap_servers)) {
          echo "<tr class='tab_bg_2'><th>" . self::getTypeName(Session::getPluralNumber()) . "</th></tr>\n";
          echo "<tr class='tab_bg_1'><td><pre>\n&nbsp;\n";
@@ -523,6 +563,68 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    /**
+    * Display LDAP filter
+    *
+    * @param string  $target target for the form
+    * @param boolean $users  for user? (true by default)
+    *
+    * @return void
+    */
+   static function displayLdapFilter($target, $users = true) {
+      $config_ldap = new self();
+      if (!isset($_SESSION['ldap_server'])) {
+         throw new \RuntimeException('LDAP server must be set!');
+      }
+      $config_ldap->getFromDB($_SESSION['ldap_server']);
+      if ($users) {
+         $filter_name1 = "condition";
+         $filter_var   = "ldap_filter";
+      } else {
+         $filter_var = "ldap_group_filter";
+         switch ($config_ldap->fields["group_search_type"]) {
+            case self::GROUP_SEARCH_USER:
+               $filter_name1 = "condition";
+               break;
+            case self::GROUP_SEARCH_GROUP:
+               $filter_name1 = "group_condition";
+               break;
+            case self::GROUP_SEARCH_BOTH:
+               $filter_name1 = "group_condition";
+               $filter_name2 = "condition";
+               break;
+         }
+      }
+      if (!isset($_SESSION[$filter_var]) || ($_SESSION[$filter_var] == '')) {
+         $_SESSION[$filter_var] = $config_ldap->fields[$filter_name1];
+      }
+      echo "<div class='center'>";
+      echo "<form method='post' action='$target'>";
+      echo "<table class='tab_cadre_fixe'>";
+      echo "<tr><th colspan='2'>" . ($users?__('Search filter for users')
+                                           :__('Filter to search in groups')) . "</th></tr>";
+      echo "<tr class='tab_bg_2'><td class='center'>";
+      echo "<input type='text' name='ldap_filter' value='". $_SESSION[$filter_var] ."' size='70'>";
+      //Only display when looking for groups in users AND groups
+      if (!$users
+          && ($config_ldap->fields["group_search_type"] == self::GROUP_SEARCH_BOTH)) {
+         if (!isset($_SESSION["ldap_group_filter2"]) || ($_SESSION["ldap_group_filter2"] == '')) {
+            $_SESSION["ldap_group_filter2"] = $config_ldap->fields[$filter_name2];
+         }
+         echo "</td></tr>";
+         echo "<tr><th colspan='2'>" . __('Search filter for users') . "</th></tr>";
+         echo "<tr class='tab_bg_2'><td class='center'>";
+         echo "<input type='text' name='ldap_filter2' value='".$_SESSION["ldap_group_filter2"]."'
+                size='70'></td></tr>";
+      }
+      echo "<tr class='tab_bg_2'><td class='center'>";
+      echo "<input class=submit type='submit' name='change_ldap_filter' value=\"".
+             _sx('button', 'Post')."\"></td></tr>";
+      echo "</table>";
+      Html::closeForm();
+      echo "</div>";
+   }
+
+   /**
     * Converts LDAP timestamps over to Unix timestamps
     *
     * @param string  $ldapstamp        LDAP timestamp
@@ -532,12 +634,10 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     */
    static function ldapStamp2UnixStamp($ldapstamp, $ldap_time_offset = 0) {
       global $CFG_GLPI;
-
       //Check if timestamp is well format, otherwise return ''
       if (!preg_match("/[\d]{14}(\.[\d]{0,4})*Z/", $ldapstamp)) {
          return '';
       }
-
       $year    = substr($ldapstamp, 0, 4);
       $month   = substr($ldapstamp, 4, 2);
       $day     = substr($ldapstamp, 6, 2);
@@ -546,10 +646,8 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       $seconds = substr($ldapstamp, 12, 2);
       $stamp   = gmmktime($hour, $minute, $seconds, $month, $day, $year);
       $stamp  += $CFG_GLPI["time_offset"]-$ldap_time_offset;
-
       return $stamp;
    }
-
 
    /**
     * Converts a Unix timestamp to an LDAP timestamps
@@ -566,27 +664,23 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * Test a LDAP connection
     *
     * @param integer $auths_id     ID of the LDAP server
-    * @param integer $primary_ldap_id use a backup if > 0 (default -1)
+    * @param integer $replicate_id use a replicate if > 0 (default -1)
     *
     * @return boolean connection succeeded?
     */
-   static function testLDAPConnection($auths_id, $primary_ldap_id = -1) {
-
+   static function testLDAPConnection($auths_id, $replicate_id = -1) {
       $config_ldap = new self();
       $res         = $config_ldap->getFromDB($auths_id);
-
       // we prevent some delay...
       if (!$res) {
          return false;
       }
-
-      //Test connection to a backup
-      if ($primary_ldap_id != -1) {
-         $backup_ldap = new PluginLdapcomputersConfigbackupldap();
-         $backup_ldap->getFromDB($primary_ldap_id);
-         $host = $backup_ldap->fields["host"];
-         $port = $backup_ldap->fields["port"];
-
+      //Test connection to a replicate
+      if ($replicate_id != -1) {
+         $replicate = new AuthLdapReplicate();
+         $replicate->getFromDB($replicate_id);
+         $host = $replicate->fields["host"];
+         $port = $replicate->fields["port"];
       } else {
          //Test connection to a master ldap server
          $host = $config_ldap->fields['host'];
@@ -613,7 +707,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     */
    static function displaySizeLimitWarning($limitexceeded = false) {
       global $CFG_GLPI;
-
       if ($limitexceeded) {
          echo "<div class='firstbloc'><table class='tab_cadre_fixe'>";
          echo "<tr><th class='red'>";
@@ -635,7 +728,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return boolean false if the user dn doesn't exist, user ldap infos otherwise
     */
    static function dnExistsInLdap($ldap_infos, $user_dn) {
-
       $found = false;
       foreach ($ldap_infos as $ldap_info) {
          if ($ldap_info['user_dn'] == $user_dn) {
@@ -645,20 +737,55 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       }
       return $found;
    }
+
    /**
-    * Open LDAP connection to current server
+    * Form to choose a ldap server
     *
-    * @return resource|boolean
+    * @param string $target target page for the form
+    *
+    * @return void
     */
-   function connect() {
-
-      return $this->connectToServer($this->fields['host'], $this->fields['port'],
-                                    $this->fields['rootdn'],
-                                    Toolbox::decrypt($this->fields['rootdn_passwd'], GLPIKEY),
-                                    $this->fields['use_tls'],
-                                    $this->fields['deref_option']);
+   static function ldapChooseDirectory($target) {
+      global $DB;
+      $iterator = $DB->request([
+         'FROM'   => self::getTable(),
+         'WHERE'  => [
+            'is_active' => 1
+         ],
+         'ORDER'  => 'name ASC'
+      ]);
+      if (count($iterator) == 1) {
+         //If only one server, do not show the choose ldap server window
+         $ldap                    = $iterator->next();
+         $_SESSION["ldap_server"] = $ldap["id"];
+         Html::redirect($_SERVER['PHP_SELF']);
+      }
+      echo "<div class='center'>";
+      echo "<form action='$target' method=\"post\">";
+      echo "<p>" . __('Please choose LDAP directory to import users and groups from') . "</p>";
+      echo "<table class='tab_cadre_fixe'>";
+      echo "<tr class='tab_bg_2'><th colspan='2'>" . __('LDAP directory choice') . "</th></tr>";
+      //If more than one ldap server
+      if (count($iterator) > 1) {
+         echo "<tr class='tab_bg_2'><td class='center'>" . __('Name') . "</td>";
+         echo "<td class='center'>";
+         AuthLDAP::Dropdown(['name'                => 'ldap_server',
+                             'display_emptychoice' => false,
+                             'comment'             => true,
+                             'condition'           => ['is_active' => 1]]);
+         echo "</td></tr>";
+         echo "<tr class='tab_bg_2'><td class='center' colspan='2'>";
+         echo "<input class='submit' type='submit' name='ldap_showusers' value=\"".
+               _sx('button', 'Post') . "\"></td></tr>";
+      } else {
+         //No ldap server
+         echo "<tr class='tab_bg_2'>".
+              "<td class='center' colspan='2'>".__('No LDAP directory defined in GLPI')."</td></tr>";
+      }
+      echo "</table>";
+      Html::closeForm();
+      echo "</div>";
    }
-
 
    /**
     * Connect to a LDAP server
@@ -674,7 +801,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     */
    static function connectToServer($host, $port, $login = "", $password = "",
                                    $use_tls = false, $deref_options = 0) {
-
       $ds = @ldap_connect($host, intval($port));
       if ($ds) {
          @ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -698,7 +824,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       return false;
    }
 
-
    /**
     * Try to connect to a ldap server
     *
@@ -717,7 +842,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                                   $ldap_method['rootdn'],
                                   Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
                                   $ldap_method['use_tls'], $ldap_method['deref_option']);
-
       // Test with login and password of the user if exists
       if (!$ds
           && !empty($login)) {
@@ -725,20 +849,18 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                                      $password, $ldap_method['use_tls'],
                                      $ldap_method['deref_option']);
       }
-
-      //If connection is not successfull on this directory, try backup (if backup exists)
+      //If connection is not successfull on this directory, try replicates (if replicates exists)
       if (!$ds
           && ($ldap_method['id'] > 0)) {
-         foreach (self::getAllBackupsForAPrimary($ldap_method['id']) as $ldap_backup) {
-            $ds = self::connectToServer($ldap_backup["host"], $ldap_backup["port"],
+         foreach (self::getAllReplicateForAMaster($ldap_method['id']) as $replicate) {
+            $ds = self::connectToServer($replicate["host"], $replicate["port"],
                                         $ldap_method['rootdn'],
                                         Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
                                         $ldap_method['use_tls'], $ldap_method['deref_option']);
-
             // Test with login and password of the user
             if (!$ds
                 && !empty($login)) {
-               $ds = self::connectToServer($ldap_backup["host"], $ldap_backup["port"], $login,
+               $ds = self::connectToServer($replicate["host"], $replicate["port"], $login,
                                            $password, $ldap_method['use_tls'],
                                            $ldap_method['deref_option']);
             }
@@ -751,30 +873,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    /**
-    * Get all backup LDAP servers for a primary one
-    *
-    * @param integer $primary_ldap_id primary ldap server ID
-    *
-    * @return array of the backup LDAP servers
-    */
-   static function getAllBackupsForAPrimary($primary_ldap_id) {
-      global $DB;
-
-      $ldap_backups = [];
-      $criteria = ['FIELDS' => ['id', 'host', 'port'],
-                'FROM'   => 'glpi_plugin_ldapcomputers_ldap_backups',
-                'WHERE'  => ['primary_ldap_id' => $primary_ldap_id]
-               ];
-      foreach ($DB->request($criteria) as $ldap_backup) {
-         $ldap_backups[] = ["id"   => $ldap_backup["id"],
-                          "host" => $ldap_backup["host"],
-                          "port" => $ldap_backup["port"]
-                         ];
-      }
-      return $ldap_backups;
-   }
-
-   /**
     * Get LDAP servers
     *
     * @return array
@@ -783,14 +881,378 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       return getAllDatasFromTable('glpi_plugin_ldapcomputers_configs', [], false, '`is_default` DESC');
    }
 
-
    /**
-    * Is the LDAP computers used?
+    * Is the LDAP authentication used?
     *
     * @return boolean
     */
-   static function useComputersLdap() {
+   static function useAuthLdap() {
       return (countElementsInTable('glpi_plugin_ldapcomputers_configs', ['is_active' => 1]) > 0);
    }
 
+   /**
+    * Manage values stored in session
+    *
+    * @param array   $options Options
+    * @param boolean $delete  (false by default)
+    *
+    * @return void
+    */
+   static function manageValuesInSession($options = [], $delete = false) {
+      $fields = ['action', 'authldaps_id', 'basedn', 'begin_date', 'criterias',  'end_date',
+                      'entities_id', 'interface', 'ldap_filter', 'mode'];
+      //If form accessed via modal, do not show expert mode link
+      // Manage new value is set : entity or mode
+      if (isset($options['entity'])
+          || isset($options['mode'])) {
+         if (isset($options['_in_modal']) && $options['_in_modal']) {
+            //If coming form the helpdesk form : reset all criterias
+            $_SESSION['ldap_import']['_in_modal']      = 1;
+            $_SESSION['ldap_import']['no_expert_mode'] = 1;
+            $_SESSION['ldap_import']['action']         = 'show';
+            $_SESSION['ldap_import']['interface']      = self::SIMPLE_INTERFACE;
+            $_SESSION['ldap_import']['mode']           = self::ACTION_IMPORT;
+         } else {
+            $_SESSION['ldap_import']['_in_modal']      = 0;
+            $_SESSION['ldap_import']['no_expert_mode'] = 0;
+         }
+      }
+      if (!$delete) {
+         if (!isset($_SESSION['ldap_import']['entities_id'])) {
+            $options['entities_id'] = $_SESSION['glpiactive_entity'];
+         }
+         if (isset($options['toprocess'])) {
+            $_SESSION['ldap_import']['action'] = 'process';
+         }
+         if (isset($options['change_directory'])) {
+            $options['ldap_filter'] = '';
+         }
+         if (!isset($_SESSION['ldap_import']['authldaps_id'])) {
+            $_SESSION['ldap_import']['authldaps_id'] = NOT_AVAILABLE;
+         }
+         if ((!Config::canUpdate()
+              && !Entity::canUpdate())
+             || (!isset($_SESSION['ldap_import']['interface'])
+                && !isset($options['interface']))) {
+            $options['interface'] = self::SIMPLE_INTERFACE;
+         }
+         foreach ($fields as $field) {
+            if (isset($options[$field])) {
+               $_SESSION['ldap_import'][$field] = $options[$field];
+            }
+         }
+         if (isset($_SESSION['ldap_import']['begin_date'])
+             && ($_SESSION['ldap_import']['begin_date'] == 'NULL')) {
+            $_SESSION['ldap_import']['begin_date'] = '';
+         }
+         if (isset($_SESSION['ldap_import']['end_date'])
+             && ($_SESSION['ldap_import']['end_date'] == 'NULL')) {
+            $_SESSION['ldap_import']['end_date'] = '';
+         }
+         if (!isset($_SESSION['ldap_import']['criterias'])) {
+            $_SESSION['ldap_import']['criterias'] = [];
+         }
+         $authldap = new self();
+         //Filter computation
+         if ($_SESSION['ldap_import']['interface'] == self::SIMPLE_INTERFACE) {
+            $entity = new Entity();
+            if ($entity->getFromDB($_SESSION['ldap_import']['entities_id'])
+                && ($entity->getField('authldaps_id') > 0)) {
+               $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
+               $_SESSION['ldap_import']['authldaps_id'] = $entity->getField('authldaps_id');
+               $_SESSION['ldap_import']['basedn']       = $entity->getField('ldap_dn');
+               // No dn specified in entity : use standard one
+               if (empty($_SESSION['ldap_import']['basedn'])) {
+                  $_SESSION['ldap_import']['basedn'] = $authldap->getField('basedn');
+               }
+               if ($entity->getField('entity_ldapfilter') != NOT_AVAILABLE) {
+                  $_SESSION['ldap_import']['entity_filter']
+                     = $entity->getField('entity_ldapfilter');
+               }
+            } else {
+               if ($_SESSION['ldap_import']['authldaps_id'] == NOT_AVAILABLE
+                   || !$_SESSION['ldap_import']['authldaps_id']) {
+                     $_SESSION['ldap_import']['authldaps_id'] = self::getDefault();
+               }
+               if ($_SESSION['ldap_import']['authldaps_id'] > 0) {
+                  $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
+                  $_SESSION['ldap_import']['basedn'] = $authldap->getField('basedn');
+               }
+            }
+            if ($_SESSION['ldap_import']['authldaps_id'] > 0) {
+               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($authldap);
+            }
+         } else {
+            if ($_SESSION['ldap_import']['authldaps_id'] == NOT_AVAILABLE
+                || !$_SESSION['ldap_import']['authldaps_id']) {
+               $_SESSION['ldap_import']['authldaps_id'] = self::getDefault();
+               if ($_SESSION['ldap_import']['authldaps_id'] > 0) {
+                  $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
+                  $_SESSION['ldap_import']['basedn'] = $authldap->getField('basedn');
+               }
+            }
+            if (!isset($_SESSION['ldap_import']['ldap_filter'])
+                || $_SESSION['ldap_import']['ldap_filter'] == '') {
+               $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
+               $_SESSION['ldap_import']['basedn']      = $authldap->getField('basedn');
+               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($authldap);
+            }
+         }
+      } else { // Unset all values in session
+         unset($_SESSION['ldap_import']);
+      }
+   }
+
+   /**
+    * Get number of servers
+    *
+    * @var DBmysql $DB
+    *
+    * @return integer
+    */
+   static function getNumberOfServers() {
+      return countElementsInTable('glpi_plugin_ldapcomputers_configs', ['is_active' => 1]);
+   }
+
+   /**
+    * Get default ldap
+    *
+    * @var DBmysql $DB DB instance
+    *
+    * @return integer
+    */
+   static function getDefault() {
+      global $DB;
+
+      foreach ($DB->request('glpi_plugin_ldapcomputers_configs', ['is_default' => 1, 'is_active' => 1]) as $data) {
+         return $data['id'];
+      }
+      return 0;
+   }
+
+   function post_updateItem($history = 1) {
+      global $DB;
+      if (in_array('is_default', $this->updates) && $this->input["is_default"]==1) {
+         $DB->update(
+            $this->getTable(),
+            ['is_default' => 0],
+            ['id' => ['<>', $this->input['id']]]
+         );
+      }
+   }
+
+   function post_addItem() {
+      global $DB;
+      if (isset($this->fields['is_default']) && $this->fields["is_default"]==1) {
+         $DB->update(
+            $this->getTable(),
+            ['is_default' => 0],
+            ['id' => ['<>', $this->fields['id']]]
+         );
+      }
+   }
+
+   function prepareInputForAdd($input) {
+      //If it's the first ldap directory then set it as the default directory
+      if (!self::getNumberOfServers()) {
+         $input['is_default'] = 1;
+      }
+      if (isset($input["rootdn_passwd"]) && !empty($input["rootdn_passwd"])) {
+         $input["rootdn_passwd"] = Toolbox::encrypt(stripslashes($input["rootdn_passwd"]), GLPIKEY);
+      }
+      return $input;
+   }
+
+   function cleanDBonPurge() {
+      Rule::cleanForItemCriteria($this, 'LDAP_SERVER');
+   }
+
+   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+      if (!$withtemplate
+          && $item->can($item->getField('id'), READ)) {
+         $ong     = [];
+         $ong[1]  = _sx('button', 'Test');                     // test connexion
+         // TODO clean fields entity_XXX if not used
+         // $ong[4]  = __('Entity');                  // params for entity config
+         $ong[2]  = __('Advanced information');   // params for entity advanced config
+         $ong[3]  = _n('Replicate', 'Replicates', Session::getPluralNumber());
+         return $ong;
+      }
+      return '';
+   }
+
+   /**
+    * Choose wich form to show
+    *
+    * @param CommonGLPI $item         Item instance
+    * @param integer    $tabnum       Tab number
+    * @param integer    $withtemplate Unused
+    *
+    * @return boolean (TRUE)
+    */
+   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+      switch ($tabnum) {
+         case 1 :
+            $item->showFormTestLDAP();
+            break;
+         case 2 :
+            $item->showFormAdvancedConfig();
+            break;
+         case 3 :
+            $item->showFormReplicatesConfig();
+            break;
+      }
+      return true;
+   }
+
+   /**
+    * Get ldap query results and clean them at the same time
+    *
+    * @param resource $link   link to the directory connection
+    * @param array    $result the query results
+    *
+    * @return array which contains ldap query results
+    */
+   static function get_entries_clean($link, $result) {
+      return ldap_get_entries($link, $result);
+   }
+
+   /**
+    * Get all replicate servers for a master one
+    *
+    * @param integer $master_id master ldap server ID
+    *
+    * @return array of the replicate servers
+    */
+   static function getAllReplicateForAMaster($master_id) {
+      global $DB;
+      $replicates = [];
+      $criteria = ['FIELDS' => ['id', 'host', 'port'],
+                'FROM'   => 'glpi_plugin_ldapcomputers_ldap_backups',
+                'WHERE'  => ['primary_ldap_id' => $master_id]
+               ];
+      foreach ($DB->request($criteria) as $replicate) {
+         $replicates[] = ["id"   => $replicate["id"],
+                          "host" => $replicate["host"],
+                          "port" => $replicate["port"]
+                         ];
+      }
+      return $replicates;
+   }
+
+   /**
+    * Check if ldap results can be paged or not
+    * This functionnality is available for PHP 5.4 and higher
+    *
+    * @since 0.84
+    *
+    * @param object  $config_ldap        LDAP configuration
+    * @param boolean $check_config_value Whether to check config values
+    *
+    * @return boolean true if maxPageSize can be used, false otherwise
+    */
+   static function isLdapPageSizeAvailable($config_ldap, $check_config_value = true) {
+      return ((!$check_config_value
+               || ($check_config_value && $config_ldap->fields['can_support_pagesize']))
+                  && function_exists('ldap_control_paged_result')
+                     && function_exists('ldap_control_paged_result_response'));
+   }
+
+   /**
+    * Get a LDAP field value
+    *
+    * @param array  $infos LDAP entry infos
+    * @param string $field Field name to retrieve
+    *
+    * @return string
+    */
+   public static function getFieldValue($infos, $field) {
+      $value = null;
+      if (is_array($infos[$field])) {
+         $value = $infos[$field][0];
+      } else {
+         $value = $infos[$field];
+      }
+      if ($field != 'objectguid') {
+         return $value;
+      }
+      //handle special objectguid from AD directories
+      try {
+         //prevent double encoding
+         if (!self::isValidGuid($value)) {
+            $value = self::guidToString($value);
+            if (!self::isValidGuid($value)) {
+               throw new \RuntimeException('Not an objectguid!');
+            }
+         }
+      } catch (\Exception $e) {
+         //well... this is not an objectguid apparently
+         $value = $infos[$field];
+      }
+      return $value;
+   }
+
+   /**
+    * Converts a string representation of an objectguid to hexadecimal
+    * Used to build filters
+    *
+    * @param string $guid_str String representation
+    *
+    * @return string
+    */
+   public static function guidToHex($guid_str) {
+      $str_g = explode('-', $guid_str);
+      $str_g[0] = strrev($str_g[0]);
+      $str_g[1] = strrev($str_g[1]);
+      $str_g[2] = strrev($str_g[2]);
+      $guid_hex = '\\';
+      $strrev = 0;
+      foreach ($str_g as $str) {
+         for ($i = 0; $i < strlen($str)+2; $i++) {
+            if ($strrev < 3) {
+               $guid_hex .= strrev(substr($str, 0, 2)).'\\';
+            } else {
+               $guid_hex .= substr($str, 0, 2).'\\';
+            }
+            $str = substr($str, 2);
+         }
+         if ($strrev < 3) {
+            $guid_hex .= strrev($str);
+         } else {
+            $guid_hex .= $str;
+         }
+         $strrev++;
+      }
+      return $guid_hex;
+   }
+
+   /**
+    * Converts binary objectguid to string representation
+    *
+    * @param mixed $binary_guid Binary objectguid from AD
+    *
+    * @return string
+    */
+   public static function guidToString($guid_bin) {
+      $guid_hex = unpack("H*hex", $guid_bin);
+      $hex = $guid_hex["hex"];
+      $hex1 = substr($hex, -26, 2) . substr($hex, -28, 2) . substr($hex, -30, 2) . substr($hex, -32, 2);
+      $hex2 = substr($hex, -22, 2) . substr($hex, -24, 2);
+      $hex3 = substr($hex, -18, 2) . substr($hex, -20, 2);
+      $hex4 = substr($hex, -16, 4);
+      $hex5 = substr($hex, -12, 12);
+      $guid_str = $hex1 . "-" . $hex2 . "-" . $hex3 . "-" . $hex4 . "-" . $hex5;
+      return $guid_str;
+   }
+
+   /**
+    * Check if text representation of an objectguid is valid
+    *
+    * @param string $string Strign representation
+    *
+    * @return boolean
+    */
+   public static function isValidGuid($guid_str) {
+      return (bool) preg_match('/^([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}$/', $guid_str);
+   }
 }
