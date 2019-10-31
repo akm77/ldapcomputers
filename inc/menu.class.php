@@ -41,19 +41,18 @@
 
 class PluginLdapcomputersMenu extends CommonGLPI {
 
-   static $rightname = 'plugin_ldapcomputers_configuration';
+   static $rightname = 'plugin_ldapcomputers_config';
 
    static function getMenuName() {
-      return __("LDAP computers", "ldapcomputers");
+      return __("LDAP computers config", "ldapcomputersconfig");
    }
 
    static function getMenuContent() {
-      /*
-      if (!Session::haveRight('plugin_ldapcomputers_configuration', READ)) {
+
+      if (!Session::haveRight('plugin_ldapcomputers_config', UPDATE)) {
          return;
       }
-      */
-      Toolbox::logInFile('ldapcomputers', 'in get menu');
+
       $front_ldapcomputers = "/plugins/ldapcomputers/front";
       $menu = [];
       $menu['title'] = self::getMenuName();
@@ -68,7 +67,6 @@ class PluginLdapcomputersMenu extends CommonGLPI {
          if ($itemtype::canCreate()) {
             $menu['options'][$option]['links']['add'] = $itemtype::getFormURL(false);
          }
-
       }
       return $menu;
    }
