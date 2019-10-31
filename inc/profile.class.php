@@ -101,7 +101,7 @@ class PluginLdapcomputersProfile extends Profile {
 
    function getAllRights() {
       $a_rights = [
-          ['rights'    => [READ => __('Read'), UPDATE  => __('Update')],
+          ['rights'    => [READ => __('Read'), UPDATE  => __('Update'), DELETE => __('Delete'), PURGE => __('Purge')],
                 'label'     => __('Manage configuration', 'ldapcomputers'),
                 'field'     => 'plugin_ldapcomputers_config'
           ],
