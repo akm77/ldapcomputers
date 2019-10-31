@@ -126,7 +126,7 @@ function plugin_ldapcomputers_uninstall() {
    $tables = [
       'configs',
       'computers',
-      'backup_ldaps',
+      'ldap_backups',
    ];
 
    foreach ($tables as $table) {
