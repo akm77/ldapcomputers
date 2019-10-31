@@ -38,15 +38,17 @@
 
  --------------------------------------------------------------------------
  */
+
 include ('../../../inc/includes.php');
 
-Session::checkRight("plugin_ldapcomputers", UPDATE);
+Session::checkRight("plugin_ldapcomputers_config", UPDATE);
 
 $config_ldap = new PluginLdapcomputersConfig();
 
 if (!isset($_GET['id'])) {
    $_GET['id'] = "";
 }
+
 //LDAP Server add/update/delete
 if (isset($_POST["update"])) {
    $config_ldap->update($_POST);
@@ -62,7 +64,7 @@ if (isset($_POST["update"])) {
             Session::addMessageAfterRedirect(__('Test failed'), false, ERROR);
             GlpiNetwork::addErrorMessageAfterRedirect();
          }
-         Html::redirect($CFG_GLPI["root_doc"] . "/front/authldap.php?next=extauth_ldap&id=".$newID);
+         Html::redirect($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/front/config.php?next=extauth_ldap&id=".$newID);
       }
    }
    Html::back();
@@ -115,7 +117,7 @@ if (isset($_POST["update"])) {
    Html::back();
 }
 
-Html::header(PluginLdapcomputersConfig::getTypeName(1), $_SERVER['PHP_SELF'], 'config', 'auth', 'ldap');
+Html::header(PluginLdapcomputersConfig::getTypeName(1), $_SERVER['PHP_SELF'], 'config', 'pluginldapcomputersmenu', 'ldapcomputersconfig');
 $config_ldap->display($_GET);
 
 Html::footer();
