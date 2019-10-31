@@ -331,7 +331,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     *
     * @return void
     */
-   function showFormReplicatesConfig() {
+   function showFormLdapBackupsConfig() {
       global $DB;
       $ID     = $this->getField('id');
       $target = $this->getFormURL();
@@ -347,9 +347,9 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       if (($nb = count($iterator)) > 0) {
          echo "<br>";
          echo "<div class='center'>";
-         Html::openMassiveActionsForm('massAuthLdapReplicate'.$rand);
+         Html::openMassiveActionsForm('massLdapBackups'.$rand);
          $massiveactionparams = ['num_displayed' => min($_SESSION['glpilist_limit'], $nb),
-                                      'container'     => 'massAuthLdapReplicate'.$rand];
+                                      'container'     => 'massLdapBackups'.$rand];
          Html::showMassiveActions($massiveactionparams);
          echo "<input type='hidden' name='id' value='$ID'>";
          echo "<table class='tab_cadre_fixehov'>";
@@ -362,25 +362,25 @@ class PluginLdapcomputersConfig extends CommonDBTM {
             unset($_SESSION["LDAP_TEST_MESSAGE"]);
          }
          $header_begin   = "<tr>";
-         $header_top     = "<th>".Html::getCheckAllAsCheckbox('massAuthLdapReplicate'.$rand)."</th>";
-         $header_bottom  = "<th>".Html::getCheckAllAsCheckbox('massAuthLdapReplicate'.$rand)."</th>";
+         $header_top     = "<th>".Html::getCheckAllAsCheckbox('massLdapBackups'.$rand)."</th>";
+         $header_bottom  = "<th>".Html::getCheckAllAsCheckbox('massLdapBackups'.$rand)."</th>";
          $header_end     = "<th class='center b'>".__('Name')."</th>";
          $header_end    .= "<th class='center b'>"._n('Replicate', 'Replicates', 1)."</th>".
               "<th class='center'></th></tr>";
          echo $header_begin.$header_top.$header_end;
-         while ($ldap_replicate = $iterator->next()) {
+         while ($ldap_backup = $iterator->next()) {
             echo "<tr class='tab_bg_1'><td class='center' width='10'>";
-            Html::showMassiveActionCheckBox('AuthLdapReplicate', $ldap_replicate["id"]);
+            Html::showMassiveActionCheckBox('LdapBackups', $ldap_backup["id"]);
             echo "</td>";
-            echo "<td class='center'>" . $ldap_replicate["name"] . "</td>";
-            echo "<td class='center'>".sprintf(__('%1$s: %2$s'), $ldap_replicate["host"],
-                                               $ldap_replicate["port"]);
+            echo "<td class='center'>" . $ldap_backup["name"] . "</td>";
+            echo "<td class='center'>".sprintf(__('%1$s: %2$s'), $ldap_backup["host"],
+                                               $ldap_backup["port"]);
             echo "</td>";
             echo "<td class='center'>";
             Html::showSimpleForm(static::getFormURL(),
-                                 'test_ldap_replicate', _sx('button', 'Test'),
+                                 'test_ldap_backup', _sx('button', 'Test'),
                                  ['id'                => $ID,
-                                       'ldap_replicate_id' => $ldap_replicate["id"]]);
+                                       'ldap_backup_id' => $ldap_backup["id"]]);
             echo "</td></tr>";
          }
          echo $header_begin.$header_bottom.$header_end;
@@ -663,24 +663,24 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    /**
     * Test a LDAP connection
     *
-    * @param integer $auths_id     ID of the LDAP server
+    * @param integer $ldap_id     ID of the LDAP server
     * @param integer $replicate_id use a replicate if > 0 (default -1)
     *
     * @return boolean connection succeeded?
     */
-   static function testLDAPConnection($auths_id, $replicate_id = -1) {
+   static function testLDAPConnection($ldap_id, $backup_ldap_id = -1) {
       $config_ldap = new self();
-      $res         = $config_ldap->getFromDB($auths_id);
+      $res         = $config_ldap->getFromDB($ldap_id);
       // we prevent some delay...
       if (!$res) {
          return false;
       }
       //Test connection to a replicate
-      if ($replicate_id != -1) {
-         $replicate = new AuthLdapReplicate();
-         $replicate->getFromDB($replicate_id);
-         $host = $replicate->fields["host"];
-         $port = $replicate->fields["port"];
+      if ($backup_ldap_id != -1) {
+         $backup_ldap = new PluginLdapcomputersConfigbackupldap();
+         $backup_ldap->getFromDB($backup_ldap_id);
+         $host = $backup_ldap->fields["host"];
+         $port = $backup_ldap->fields["port"];
       } else {
          //Test connection to a master ldap server
          $host = $config_ldap->fields['host'];
@@ -769,7 +769,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       if (count($iterator) > 1) {
          echo "<tr class='tab_bg_2'><td class='center'>" . __('Name') . "</td>";
          echo "<td class='center'>";
-         AuthLDAP::Dropdown(['name'                => 'ldap_server',
+         PluginLdapcomputersConfig::Dropdown(['name'                => 'ldap_server',
                              'display_emptychoice' => false,
                              'comment'             => true,
                              'condition'           => ['is_active' => 1]]);
@@ -852,15 +852,15 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       //If connection is not successfull on this directory, try replicates (if replicates exists)
       if (!$ds
           && ($ldap_method['id'] > 0)) {
-         foreach (self::getAllReplicateForAMaster($ldap_method['id']) as $replicate) {
-            $ds = self::connectToServer($replicate["host"], $replicate["port"],
+         foreach (self::getAllBackupsForAMaster($ldap_method['id']) as $backup_ldap) {
+            $ds = self::connectToServer($backup_ldap["host"], $backup_ldap["port"],
                                         $ldap_method['rootdn'],
                                         Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
                                         $ldap_method['use_tls'], $ldap_method['deref_option']);
             // Test with login and password of the user
             if (!$ds
                 && !empty($login)) {
-               $ds = self::connectToServer($replicate["host"], $replicate["port"], $login,
+               $ds = self::connectToServer($backup_ldap["host"], $backup_ldap["port"], $login,
                                            $password, $ldap_method['use_tls'],
                                            $ldap_method['deref_option']);
             }
@@ -899,7 +899,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     * @return void
     */
    static function manageValuesInSession($options = [], $delete = false) {
-      $fields = ['action', 'authldaps_id', 'basedn', 'begin_date', 'criterias',  'end_date',
+      $fields = ['action', 'primary_ldap_id', 'basedn', 'begin_date', 'criterias',  'end_date',
                       'entities_id', 'interface', 'ldap_filter', 'mode'];
       //If form accessed via modal, do not show expert mode link
       // Manage new value is set : entity or mode
@@ -927,8 +927,8 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          if (isset($options['change_directory'])) {
             $options['ldap_filter'] = '';
          }
-         if (!isset($_SESSION['ldap_import']['authldaps_id'])) {
-            $_SESSION['ldap_import']['authldaps_id'] = NOT_AVAILABLE;
+         if (!isset($_SESSION['ldap_import']['primary_ldap_id'])) {
+            $_SESSION['ldap_import']['primary_ldap_id'] = NOT_AVAILABLE;
          }
          if ((!Config::canUpdate()
               && !Entity::canUpdate())
@@ -952,50 +952,50 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          if (!isset($_SESSION['ldap_import']['criterias'])) {
             $_SESSION['ldap_import']['criterias'] = [];
          }
-         $authldap = new self();
+         $ldap_server = new self();
          //Filter computation
          if ($_SESSION['ldap_import']['interface'] == self::SIMPLE_INTERFACE) {
             $entity = new Entity();
             if ($entity->getFromDB($_SESSION['ldap_import']['entities_id'])
-                && ($entity->getField('authldaps_id') > 0)) {
-               $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
-               $_SESSION['ldap_import']['authldaps_id'] = $entity->getField('authldaps_id');
+                && ($entity->getField('primary_ldap_id') > 0)) {
+               $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+               $_SESSION['ldap_import']['primary_ldap_id'] = $entity->getField('primary_ldap_id');
                $_SESSION['ldap_import']['basedn']       = $entity->getField('ldap_dn');
                // No dn specified in entity : use standard one
                if (empty($_SESSION['ldap_import']['basedn'])) {
-                  $_SESSION['ldap_import']['basedn'] = $authldap->getField('basedn');
+                  $_SESSION['ldap_import']['basedn'] = $ldap_server->getField('basedn');
                }
                if ($entity->getField('entity_ldapfilter') != NOT_AVAILABLE) {
                   $_SESSION['ldap_import']['entity_filter']
                      = $entity->getField('entity_ldapfilter');
                }
             } else {
-               if ($_SESSION['ldap_import']['authldaps_id'] == NOT_AVAILABLE
-                   || !$_SESSION['ldap_import']['authldaps_id']) {
-                     $_SESSION['ldap_import']['authldaps_id'] = self::getDefault();
+               if ($_SESSION['ldap_import']['primary_ldap_id'] == NOT_AVAILABLE
+                   || !$_SESSION['ldap_import']['primary_ldap_id']) {
+                     $_SESSION['ldap_import']['primary_ldap_id'] = self::getDefault();
                }
-               if ($_SESSION['ldap_import']['authldaps_id'] > 0) {
-                  $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
-                  $_SESSION['ldap_import']['basedn'] = $authldap->getField('basedn');
+               if ($_SESSION['ldap_import']['primary_ldap_id'] > 0) {
+                  $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+                  $_SESSION['ldap_import']['basedn'] = $ldap_server->getField('basedn');
                }
             }
-            if ($_SESSION['ldap_import']['authldaps_id'] > 0) {
-               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($authldap);
+            if ($_SESSION['ldap_import']['primary_ldap_id'] > 0) {
+               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($ldap_server);
             }
          } else {
-            if ($_SESSION['ldap_import']['authldaps_id'] == NOT_AVAILABLE
-                || !$_SESSION['ldap_import']['authldaps_id']) {
-               $_SESSION['ldap_import']['authldaps_id'] = self::getDefault();
-               if ($_SESSION['ldap_import']['authldaps_id'] > 0) {
-                  $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
-                  $_SESSION['ldap_import']['basedn'] = $authldap->getField('basedn');
+            if ($_SESSION['ldap_import']['primary_ldap_id'] == NOT_AVAILABLE
+                || !$_SESSION['ldap_import']['primary_ldap_id']) {
+               $_SESSION['ldap_import']['primary_ldap_id'] = self::getDefault();
+               if ($_SESSION['ldap_import']['primary_ldap_id'] > 0) {
+                  $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+                  $_SESSION['ldap_import']['basedn'] = $ldap_server->getField('basedn');
                }
             }
             if (!isset($_SESSION['ldap_import']['ldap_filter'])
                 || $_SESSION['ldap_import']['ldap_filter'] == '') {
-               $authldap->getFromDB($_SESSION['ldap_import']['authldaps_id']);
-               $_SESSION['ldap_import']['basedn']      = $authldap->getField('basedn');
-               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($authldap);
+               $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+               $_SESSION['ldap_import']['basedn']      = $ldap_server->getField('basedn');
+               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($ldap_server);
             }
          }
       } else { // Unset all values in session
@@ -1099,7 +1099,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
             $item->showFormAdvancedConfig();
             break;
          case 3 :
-            $item->showFormReplicatesConfig();
+            $item->showFormLdapBackupsConfig();
             break;
       }
       return true;
@@ -1124,20 +1124,20 @@ class PluginLdapcomputersConfig extends CommonDBTM {
     *
     * @return array of the replicate servers
     */
-   static function getAllReplicateForAMaster($master_id) {
+   static function getAllBackupsForAMaster($master_id) {
       global $DB;
-      $replicates = [];
+      $backup_ldaps = [];
       $criteria = ['FIELDS' => ['id', 'host', 'port'],
                 'FROM'   => 'glpi_plugin_ldapcomputers_ldap_backups',
                 'WHERE'  => ['primary_ldap_id' => $master_id]
                ];
-      foreach ($DB->request($criteria) as $replicate) {
-         $replicates[] = ["id"   => $replicate["id"],
-                          "host" => $replicate["host"],
-                          "port" => $replicate["port"]
+      foreach ($DB->request($criteria) as $backup_ldap) {
+         $backup_ldaps[] = ["id"   => $backup_ldap["id"],
+                          "host" => $backup_ldap["host"],
+                          "port" => $backup_ldap["port"]
                          ];
       }
-      return $replicates;
+      return $backup_ldaps;
    }
 
    /**
