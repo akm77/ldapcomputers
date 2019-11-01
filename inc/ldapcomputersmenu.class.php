@@ -56,9 +56,9 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
       $front_ldapcomputers = "/plugins/ldapcomputers/front";
       $menu = [];
       $menu['title'] = self::getMenuName();
-      $menu['page']  = "$front_ldapcomputers/computers.php";
+      $menu['page']  = "$front_ldapcomputers/computer.php";
 
-      $itemtypes = ['PluginLdapcomputersComputers' => 'ldapcomputerscomputers'];
+      $itemtypes = ['PluginLdapcomputersComputer' => 'ldapcomputerscomputer'];
 
       foreach ($itemtypes as $itemtype => $option) {
          $menu['options'][$option]['title']           = $itemtype::getTypeName(2);
