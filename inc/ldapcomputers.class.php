@@ -44,7 +44,7 @@ if (!defined('GLPI_ROOT')) {
 }
 
 /**
- *  Class used to manage LDAP computers
+ *  Class used to view and import LDAP computers
  */
 class PluginLdapcomputersLdapcomputers extends CommonDBTM {
 
