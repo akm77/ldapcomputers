@@ -85,9 +85,9 @@ class PluginLdapcomputersConfigbackupldap extends CommonDBTM {
    }
 
    /**
-    * Form to add a replicate to a ldap server
+    * Form to add a backup to a ldap server
     *
-    * @param string  $target    target page for add new replicate
+    * @param string  $target    target page for add new backup
     * @param integer $master_id master ldap server ID
     *
     * @return void
