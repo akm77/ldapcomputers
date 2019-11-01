@@ -44,7 +44,7 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
    static $rightname = 'plugin_ldapcomputers';
 
    static function getMenuName() {
-      return __("View LDAP computers", "ldapcomputersldapcomputers");
+      return __("View LDAP computers", "ldapcomputerscomputers");
    }
 
    static function getMenuContent() {
@@ -56,9 +56,9 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
       $front_ldapcomputers = "/plugins/ldapcomputers/front";
       $menu = [];
       $menu['title'] = self::getMenuName();
-      $menu['page']  = "$front_ldapcomputers/ldapcomputers.php";
+      $menu['page']  = "$front_ldapcomputers/computers.php";
 
-      $itemtypes = ['PluginLdapcomputersLdapcomputers' => 'ldapcomputersldapcomputers'];
+      $itemtypes = ['PluginLdapcomputersComputers' => 'ldapcomputerscomputers'];
 
       foreach ($itemtypes as $itemtype => $option) {
          $menu['options'][$option]['title']           = $itemtype::getTypeName(2);
