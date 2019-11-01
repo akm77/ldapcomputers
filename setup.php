@@ -64,7 +64,8 @@ function plugin_init_ldapcomputers() {
       // add link in plugin page
       $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
       // add entry to configuration menu
-      $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers'] = ['config' => 'PluginLdapcomputersMenu'];
+      $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['config'] = 'PluginLdapcomputersConfigmenu';
+      $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['admin']  = 'PluginLdapcomputersLdapcomputersmenu';
    }
 }
 
