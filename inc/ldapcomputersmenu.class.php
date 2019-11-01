@@ -49,10 +49,10 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
 
    static function getMenuContent() {
 
-   /*   if (!Session::haveRight('plugin_ldapcomputers', READ)) {
+      if (!Session::haveRight('plugin_ldapcomputers', READ)) {
          return;
       }
-*/
+
       $front_ldapcomputers = "/plugins/ldapcomputers/front";
       $menu = [];
       $menu['title'] = self::getMenuName();
