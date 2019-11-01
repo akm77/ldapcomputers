@@ -58,7 +58,7 @@ if (isset($_POST["update"])) {
    //If no name has been given to this configuration, then go back to the page without adding
    if ($_POST["name"] != "") {
       if ($newID = $config_ldap->add($_POST)) {
-         if (PluginLdapcomputersConfig::testLDAPConnection($newID)) {
+         if (PluginLdapcomputersLdap::testLDAPConnection($newID)) {
             Session::addMessageAfterRedirect(__('Test successful'));
          } else {
             Session::addMessageAfterRedirect(__('Test failed'), false, ERROR);
@@ -77,7 +77,7 @@ if (isset($_POST["update"])) {
 } else if (isset($_POST["test_ldap"])) {
    $config_ldap->getFromDB($_POST["id"]);
 
-   if (PluginLdapcomputersConfig::testLDAPConnection($_POST["id"])) {
+   if (PluginLdapcomputersLdap::testLDAPConnection($_POST["id"])) {
                                        //TRANS: %s is the description of the test
       $_SESSION["LDAP_TEST_MESSAGE"] = sprintf(__('Test successful: %s'),
                                                //TRANS: %s is the name of the LDAP main server
@@ -95,7 +95,7 @@ if (isset($_POST["update"])) {
    $backup_ldap = new PluginLdapcomputersConfigbackupldap();
    $backup_ldap->getFromDB($_POST["ldap_backup_id"]);
 
-   if (PluginLdapcomputersConfig::testLDAPConnection($_POST["id"], $_POST["ldap_backup_id"])) {
+   if (PluginLdapcomputersLdap::testLDAPConnection($_POST["id"], $_POST["ldap_backup_id"])) {
                                        //TRANS: %s is the description of the test
       $_SESSION["LDAP_TEST_MESSAGE"] = sprintf(__('Test successful: %s'),
                                                //TRANS: %s is the name of the LDAP replica server
