@@ -84,7 +84,7 @@ function plugin_ldapcomputers_install() {
    //Create computers table only if it does not exists yet!
    if (!$DB->tableExists('glpi_plugin_ldapcomputers_computers')) {
       $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_computers` (
-                  `id` int(11) NOT NULL,
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
                   `name` varchar(255) NOT NULL,
                   `lastLogon` datetime NOT NULL,
                   `logonCount` int(11) NOT NULL,
