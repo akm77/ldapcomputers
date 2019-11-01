@@ -325,7 +325,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    /**
-    * Show config replicates form
+    * Show config LDAP backups form
     *
     * @var DBmysql $DB
     *
@@ -370,7 +370,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo $header_begin.$header_top.$header_end;
          while ($ldap_backup = $iterator->next()) {
             echo "<tr class='tab_bg_1'><td class='center' width='10'>";
-            Html::showMassiveActionCheckBox('LdapBackups', $ldap_backup["id"]);
+            Html::showMassiveActionCheckBox('PluginLdapcomputersConfigbackupldap', $ldap_backup["id"]);
             echo "</td>";
             echo "<td class='center'>" . $ldap_backup["name"] . "</td>";
             echo "<td class='center'>".sprintf(__('%1$s: %2$s'), $ldap_backup["host"],
@@ -675,7 +675,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       if (!$res) {
          return false;
       }
-      //Test connection to a replicate
+      //Test connection to a LDAP backup
       if ($backup_ldap_id != -1) {
          $backup_ldap = new PluginLdapcomputersConfigbackupldap();
          $backup_ldap->getFromDB($backup_ldap_id);
@@ -849,7 +849,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                                      $password, $ldap_method['use_tls'],
                                      $ldap_method['deref_option']);
       }
-      //If connection is not successfull on this directory, try replicates (if replicates exists)
+      //If connection is not successfull on this directory, try LDAP backups (if backups exists)
       if (!$ds
           && ($ldap_method['id'] > 0)) {
          foreach (self::getAllBackupsForAMaster($ldap_method['id']) as $backup_ldap) {
@@ -1118,11 +1118,11 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    /**
-    * Get all replicate servers for a master one
+    * Get all LDAP backup servers for a master one
     *
     * @param integer $master_id master ldap server ID
     *
-    * @return array of the replicate servers
+    * @return array of the LDAP backup servers
     */
    static function getAllBackupsForAMaster($master_id) {
       global $DB;
