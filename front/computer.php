@@ -38,6 +38,7 @@
 
  --------------------------------------------------------------------------
  */
+
 include ('../../../inc/includes.php');
 
 Session::checkRight("plugin_ldapcomputers", READ);
