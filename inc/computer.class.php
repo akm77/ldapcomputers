@@ -48,6 +48,10 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginLdapcomputersComputer extends CommonDBTM {
 
+   const LDAP_STATUS_NEW     = 0;
+   const LDAP_STATUS_ACTIVE  = 1;
+   const LDAP_STATUS_DELETED = 2;
+
    static $rightname = 'plugin_ldapcomputers';
 
    //connection caching stuff
@@ -63,6 +67,69 @@ class PluginLdapcomputersComputer extends CommonDBTM {
 
    static function canPurge() {
       return static::canUpdate();
+   }
+
+   static function processMassiveActionsForOneItemtype(MassiveAction $ma, CommonDBTM $item, array $ids) {
+      $input = $ma->getInput();
+      parent::processMassiveActionsForOneItemtype($ma, $item, $ids);
+   }
+
+   function plugin_ldapcomputers_getDropdown() {
+      return ['PluginLdapcomputersComputer' => PluginLdapcomputersComputer::getTypeName(2)];
+   }
+   /**
+    * Print the config ldap form
+    *
+    * @param integer $ID      ID of the item
+    * @param array   $options Options
+    *     - target for the form
+    *
+    * @return void (display)
+    */
+   function showForm($ID, $options = []) {
+      if (!Config::canUpdate()) {
+         return false;
+      }
+      $this->showFormHeader($options);
+      echo "<tr class='tab_bg_1'><td><label for='name'>" . __('Name') . "</label></td>";
+      echo "<td><input type='text' readonly id='name' name='name' value='". $this->fields["name"] ."'></td>";
+      if ($ID > 0) {
+         echo "<td>".__('Last update')."</td><td>".Html::convDateTime($this->fields["date_mod"]);
+      } else {
+         echo "<td colspan='2'>&nbsp;";
+      }
+      echo "</td></tr>";
+
+      echo "<tr class='tab_bg_1'><td><label for='lastLogon'>" . __('Last Logon') . "</label></td>";
+      echo "<td><input type='text' readonly id='name' name='lastLogon' value='". $this->fields["lastLogon"] ."'></td>";
+      echo "<td><label for='logonCount'>" . __('Logon Count') . "</label></td>";
+      echo "<td><input type='text' readonly id='name' name='logonCount' value='". $this->fields["logonCount"] ."'></td></tr>";
+
+      echo "<tr class='tab_bg_1'>";
+      echo "<td><label for='distinguishedName'>" . __('Distinguished Name') . "</label></td>";
+      echo "<td class=middle colspan='3'>";
+      echo "<textarea cols='40' rows='4' readonly name='distinguishedName' id='distinguishedName'>".$this->fields["distinguishedName"]."</textarea>";
+      echo "</td></tr>";
+
+      echo "<tr class='tab_bg_1'>";
+      echo "<td>" . __('Computer status in LDAP') . "</td><td colspan='4'>";
+      $ldap_statuses = [
+         self::LDAP_STATUS_NEW     => __('New'),
+         self::LDAP_STATUS_ACTIVE    => __('Active'),
+         self::LDAP_STATUS_DELETED => __('Deleted'),
+      ];
+      Dropdown::showFromArray("ldap_status", $ldap_statuses,
+                              ['value' => $this->fields["ldap_status"]]);
+      echo"</td></tr>";
+
+      $is_in_glpi_computers = mt_rand();
+      echo "<tr class='tab_bg_1'><td><label for='dropdown_is_default$is_in_glpi_computers'>" . __('GLPI presence') . "</label></td>";
+      echo "<td>";
+      Dropdown::showYesNo('is_in_glpi_computers', $this->fields['is_in_glpi_computers'], -1, ['rand' => $is_in_glpi_computers]);
+      echo "</td>";
+
+      $this->showFormButtons($options);
+
    }
 
    function rawSearchOptions() {
