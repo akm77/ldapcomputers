@@ -69,8 +69,8 @@ function plugin_ldapcomputers_install() {
    }
 
    //Create backup ldaps table only if it does not exists yet!
-   if (!$DB->tableExists('glpi_plugin_ldapcomputers_ldap_backups')) {
-      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_ldap_backups` (
+   if (!$DB->tableExists('glpi_plugin_ldapcomputers_ldapbackups')) {
+      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_ldapbackups` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `primary_ldap_id` int(11) NOT NULL DEFAULT 0,
                   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -89,12 +89,26 @@ function plugin_ldapcomputers_install() {
                   `lastLogon` datetime NOT NULL,
                   `logonCount` int(11) NOT NULL,
                   `distinguishedName` text NOT NULL,
-                  `ldap_status` int(11) NOT NULL DEFAULT 0,
+                  `plugin_ldapcomputers_states_id` int(11) NOT NULL DEFAULT 0,
                   `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
                   `date_creation` datetime NOT NULL,
                   `date_mod` datetime NOT NULL,
                   PRIMARY KEY (`id`),
                   KEY `date_mod` (`date_mod`),
+                  KEY `name` (`name`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
+      $DB->queryOrDie($query, $DB->error());
+   }
+
+   //Create computers table only if it does not exists yet!
+   if (!$DB->tableExists('glpi_plugin_ldapcomputers_states')) {
+      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_states` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `name` varchar(255) NOT NULL,
+                  `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `date_creation` datetime NOT NULL,
+                  `date_mod` datetime NOT NULL,
+                  PRIMARY KEY (`id`),
                   KEY `name` (`name`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
@@ -107,12 +121,51 @@ function plugin_ldapcomputers_install() {
    }
    */
 
+   $state = new PluginLdapcomputersState();
+   $table = $state->getTable();
+   foreach ([$state::LDAP_STATUS_NEW     => __("New", "ldapcomputers"),
+             $state::LDAP_STATUS_ACTIVE  => __("Active", "ldapcomputers"),
+             $state::LDAP_STATUS_DELETED => __("Deleted", "ldapcomputers"),
+            ] as $id => $label) {
+      if (!countElementsInTable($table, ['id' => $id])) {
+         $state->add(['id'   => $id,
+                      'name' => Toolbox::addslashes_deep($label),
+                     ]);
+      }
+   }
+
    //execute the whole migration
    $migration->executeMigration();
 
    PluginLdapcomputersProfile::initProfile();
 
    return true;
+}
+
+/* define dropdown tables to be manage in GLPI : */
+function plugin_ldapcomputers_getDropdown() {
+   /* table => name */
+   $plugin = new Plugin();
+   if ($plugin->isActivated("ldapcomputers")) {
+      return ['PluginLdapcomputersState' => PluginLdapcomputersState::getTypeName()];
+   } else {
+      return [];
+   }
+}
+
+/* define dropdown relations */
+function plugin_ldapcomputers_getDatabaseRelations() {
+   $plugin = new Plugin();
+   if ($plugin->isActivated("ldapcomputers")) {
+      return [
+         "glpi_plugin_ldapcomputers_states" => [
+            "glpi_plugin_ldapcomputers_computers" => "plugin_ldapcomputers_states_id"
+         ]
+      ];
+
+   } else {
+      return [];
+   }
 }
 
 /**
@@ -127,6 +180,7 @@ function plugin_ldapcomputers_uninstall() {
       'configs',
       'computers',
       'ldap_backups',
+      'states',
    ];
 
    foreach ($tables as $table) {
