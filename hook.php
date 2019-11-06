@@ -89,7 +89,7 @@ function plugin_ldapcomputers_install() {
                   `lastLogon` datetime NOT NULL,
                   `logonCount` int(11) NOT NULL,
                   `distinguishedName` text NOT NULL,
-                  `ldap_status` tinyint(4) NOT NULL DEFAULT 0,
+                  `ldap_status` int(11) NOT NULL DEFAULT 0,
                   `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
                   `date_creation` datetime NOT NULL,
                   `date_mod` datetime NOT NULL,
