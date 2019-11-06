@@ -184,7 +184,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
       }
       //Test connection to a LDAP backup
       if ($backup_ldap_id != -1) {
-         $backup_ldap = new PluginLdapcomputersConfigbackupldap();
+         $backup_ldap = new PluginLdapcomputersLdapbackup();
          $backup_ldap->getFromDB($backup_ldap_id);
          $host = $backup_ldap->fields["host"];
          $port = $backup_ldap->fields["port"];
