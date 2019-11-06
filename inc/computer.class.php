@@ -48,10 +48,6 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginLdapcomputersComputer extends CommonDBTM {
 
-   const LDAP_STATUS_NEW     = 0;
-   const LDAP_STATUS_ACTIVE  = 1;
-   const LDAP_STATUS_DELETED = 2;
-
    static $rightname = 'plugin_ldapcomputers';
 
    //connection caching stuff
@@ -74,9 +70,6 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       parent::processMassiveActionsForOneItemtype($ma, $item, $ids);
    }
 
-   function plugin_ldapcomputers_getDropdown() {
-      return ['PluginLdapcomputersComputer' => PluginLdapcomputersComputer::getTypeName(2)];
-   }
    /**
     * Print the config ldap form
     *
@@ -113,13 +106,10 @@ class PluginLdapcomputersComputer extends CommonDBTM {
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __('Computer status in LDAP') . "</td><td colspan='4'>";
-      $ldap_statuses = [
-         self::LDAP_STATUS_NEW     => __('New'),
-         self::LDAP_STATUS_ACTIVE    => __('Active'),
-         self::LDAP_STATUS_DELETED => __('Deleted'),
-      ];
-      Dropdown::showFromArray("ldap_status", $ldap_statuses,
-                              ['value' => $this->fields["ldap_status"]]);
+      PluginLdapcomputersState::Dropdown([
+         'name'   => "plugin_ldapcomputers_states_id",
+         'value'  => $this->fields['plugin_ldapcomputers_states_id'],
+      ]);
       echo"</td></tr>";
 
       $is_in_glpi_computers = mt_rand();
@@ -177,10 +167,12 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       ];
       $tab[] = [
          'id'                 => '6',
-         'table'              => $this->getTable(),
-         'field'              => 'ldap_status',
-         'name'               => __('LDAP status'),
-         'datatype'           => 'tinyint'
+         'table'              => 'glpi_plugin_ldapcomputers_states',
+         'field'              => 'name',
+         'name'               => __('LDAP computer status'),
+         'datatype'           => 'dropdown',
+         'displaytype'        => 'dropdown',
+         'injectable'         => true
       ];
       $tab[] = [
          'id'                 => '7',
