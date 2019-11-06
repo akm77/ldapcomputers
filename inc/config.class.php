@@ -336,9 +336,9 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       $ID     = $this->getField('id');
       $target = $this->getFormURL();
       $rand   = mt_rand();
-      PluginLdapcomputersConfigbackupldap::addNewBackupLdapForm($target, $ID);
+      PluginLdapcomputersLdapbackup::addNewBackupLdapForm($target, $ID);
       $iterator = $DB->request([
-         'FROM'   => 'glpi_plugin_ldapcomputers_ldap_backups',
+         'FROM'   => 'glpi_plugin_ldapcomputers_ldapbackups',
          'WHERE'  => [
             'primary_ldap_id' => $ID
          ],
@@ -960,7 +960,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       global $DB;
       $backup_ldaps = [];
       $criteria = ['FIELDS' => ['id', 'host', 'port'],
-                'FROM'   => 'glpi_plugin_ldapcomputers_ldap_backups',
+                'FROM'   => 'glpi_plugin_ldapcomputers_ldapbackups',
                 'WHERE'  => ['primary_ldap_id' => $master_id]
                ];
       foreach ($DB->request($criteria) as $backup_ldap) {
