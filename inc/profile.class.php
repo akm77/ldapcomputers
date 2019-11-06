@@ -105,7 +105,7 @@ class PluginLdapcomputersProfile extends Profile {
                 'label'     => __('Manage configuration', 'ldapcomputers'),
                 'field'     => 'plugin_ldapcomputers_config'
           ],
-          ['rights'    => [READ  => __('Read')],
+          ['rights'    => [READ => __('Read'), UPDATE  => __('Update'), DELETE => __('Delete'), PURGE => __('Purge')],
                 'label'     => __('View computers', 'ldapcomputers'),
                 'field'     => 'plugin_ldapcomputers'
           ]
