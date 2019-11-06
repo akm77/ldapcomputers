@@ -92,7 +92,7 @@ if (isset($_POST["update"])) {
    Html::back();
 
 } else if (isset($_POST["test_ldap_backup"])) {
-   $backup_ldap = new PluginLdapcomputersConfigbackupldap();
+   $backup_ldap = new PluginLdapcomputersLdapbackup();
    $backup_ldap->getFromDB($_POST["ldap_backup_id"]);
 
    if (PluginLdapcomputersLdap::testLDAPConnection($_POST["id"], $_POST["ldap_backup_id"])) {
@@ -110,7 +110,7 @@ if (isset($_POST["update"])) {
    Html::back();
 
 } else if (isset($_POST["add_backup_ldap"])) {
-   $backup_ldap = new PluginLdapcomputersConfigbackupldap();
+   $backup_ldap = new PluginLdapcomputersLdapbackup();
    unset($_POST["next"]);
    unset($_POST["id"]);
    $backup_ldap->add($_POST);
