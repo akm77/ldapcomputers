@@ -38,6 +38,7 @@
 
  --------------------------------------------------------------------------
  */
+
 define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.2');
 // Minimal GLPI version, inclusive
 define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
@@ -60,13 +61,18 @@ function plugin_init_ldapcomputers() {
    $PLUGIN_HOOKS['change_profile']['ldapcomputers'] = ['PluginLdapcomputersProfile', 'initProfile'];
    $PLUGIN_HOOKS['use_massive_action']['ldapcomputers'] = 1;
 
-   if (isset($_SESSION['glpiactiveentities'])) {
-      // add link in plugin page
-      $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
-      // add entry to configuration menu
-      $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['config'] = 'PluginLdapcomputersConfigmenu';
-      // add entry to view computers menu
-      $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['admin']  = 'PluginLdapcomputersLdapcomputersmenu';
+   if (Session::getLoginUserID()) {
+      // Display a menu entry ?
+      if (Session::haveRight("plugin_ldapcomputers_config", UPDATE)) {
+         // add link in plugin page
+         $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
+         // add entry to configuration menu
+         $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['config'] = 'PluginLdapcomputersConfigmenu';
+      }
+      if (Session::haveRight("plugin_ldapcomputers_view", UPDATE)) {
+         // add entry to view computers menu
+         $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['admin']  = 'PluginLdapcomputersLdapcomputersmenu';
+      }
    }
 }
 
