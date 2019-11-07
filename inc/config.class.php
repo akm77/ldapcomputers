@@ -370,7 +370,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo $header_begin.$header_top.$header_end;
          while ($ldap_backup = $iterator->next()) {
             echo "<tr class='tab_bg_1'><td class='center' width='10'>";
-            Html::showMassiveActionCheckBox('PluginLdapcomputersConfigbackupldap', $ldap_backup["id"]);
+            Html::showMassiveActionCheckBox('PluginLdapcomputersLdapbackup', $ldap_backup["id"]);
             echo "</td>";
             echo "<td class='center'>" . $ldap_backup["name"] . "</td>";
             echo "<td class='center'>".sprintf(__('%1$s: %2$s'), $ldap_backup["host"],
@@ -386,6 +386,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo $header_begin.$header_bottom.$header_end;
          echo "</table>";
          $massiveactionparams['ontop'] = false;
+         Toolbox::logInFile('massaction', json_encode($massiveactionparams));
          Html::showMassiveActions($massiveactionparams);
          Html::closeForm();
          echo "</div>";

@@ -50,8 +50,7 @@ class PluginLdapcomputersState extends CommonDropdown {
    const LDAP_STATUS_ACTIVE  = 2;
    const LDAP_STATUS_DELETED = 3;
 
-   public static $rightname   = 'plugin_ldapcomputers';
-
+   public static $rightname   = 'plugin_ldapcomputers_config';
 
    public static function getTypeName($nb = 0) {
       return __("LDAP computer status", "ldapcomputers");

@@ -101,21 +101,20 @@ class PluginLdapcomputersProfile extends Profile {
 
    function getAllRights() {
       $a_rights = [
-          ['rights'    => [READ => __('Read'), UPDATE  => __('Update'), CREATE => __('Create'), DELETE => __('Delete'), PURGE => __('Purge')],
-                'label'     => __('Manage configuration', 'ldapcomputers'),
-                'field'     => 'plugin_ldapcomputers_config'
-          ],
-          ['rights'    => [READ => __('Read'), UPDATE  => __('Update'), CREATE => __('Create'), DELETE => __('Delete'), PURGE => __('Purge')],
-                'label'     => __('View computers', 'ldapcomputers'),
-                'field'     => 'plugin_ldapcomputers'
-          ]
-      ];
+                     ['rights'    => [READ => __('Read'), UPDATE  => __('Update'),],
+                      'label'     => __('LDAP computers config', 'ldapcomputers'),
+                      'field'     => 'plugin_ldapcomputers_config'],
+                     ['rights'    => [READ => __('Read'), UPDATE  => __('Update')],
+                      'label'     => __('View LDAP computers', 'ldapcomputers'),
+                      'field'     => 'plugin_ldapcomputers_view']
+                  ];
 
       return $a_rights;
    }
 
    static function addDefaultProfileInfos($profiles_id, $rights) {
       $profileRight = new ProfileRight();
+
       foreach ($rights as $right => $value) {
          if (!countElementsInTable('glpi_profilerights',
                                    ['profiles_id' => $profiles_id, 'name' => $right])) {
@@ -136,6 +135,7 @@ class PluginLdapcomputersProfile extends Profile {
    static function createFirstAccess($profiles_id) {
 
       $profile = new self();
+
       foreach ($profile->getAllRights() as $right) {
          self::addDefaultProfileInfos($profiles_id,
                                       [$right['field'] => ALLSTANDARDRIGHT]);

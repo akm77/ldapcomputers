@@ -48,7 +48,7 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginLdapcomputersComputer extends CommonDBTM {
 
-   static $rightname = 'plugin_ldapcomputers';
+   static $rightname = 'plugin_ldapcomputers_view';
 
    //connection caching stuff
    static $conn_cache = [];
