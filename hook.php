@@ -115,10 +115,6 @@ function plugin_ldapcomputers_install() {
    }
 
    /* Placeholder for further update process in future
-   if (!$DB->tableExists('glpi_plugin_ldapcomputers_configs')) {
-      $query = '';
-      $DB->queryOrDie($query, $DB->error());
-   }
    */
 
    $state = new PluginLdapcomputersState();
