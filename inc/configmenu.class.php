@@ -52,12 +52,12 @@ class PluginLdapcomputersConfigmenu extends CommonGLPI {
    }
 
    static function getMenuName() {
-      return __("LDAP computers config", "ldapcomputersconfig");
+      return __("LDAP computers config", "ldapcomputers");
    }
 
    static function getMenuContent() {
 
-      if (!Session::haveRight('plugin_ldapcomputers', UPDATE)) {
+      if (!Session::haveRight('plugin_ldapcomputers_config', UPDATE)) {
          return;
       }
 
