@@ -52,12 +52,13 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
    }
 
    static function getMenuName() {
-      return __("View LDAP computers", "ldapcomputerscomputers");
+      return __("View LDAP computers", "ldapcomputers");
    }
 
    static function getMenuContent() {
+      global $CFG_GLPI;
 
-      if (!Session::haveRight('plugin_ldapcomputers', UPDATE)) {
+      if (!Session::haveRight('plugin_ldapcomputers_config', UPDATE)) {
          return;
       }
 
@@ -65,17 +66,15 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
       $menu = [];
       $menu['title'] = self::getMenuName();
       $menu['page']  = "$front_ldapcomputers/computer.php";
-
-      $itemtypes = ['PluginLdapcomputersComputer' => 'ldapcomputerscomputer'];
-
-      foreach ($itemtypes as $itemtype => $option) {
-         $menu['options'][$option]['title']           = $itemtype::getTypeName(2);
-         $menu['options'][$option]['page']            = $itemtype::getSearchURL(false);
-         $menu['options'][$option]['links']['search'] = $itemtype::getSearchURL(false);
-         if ($itemtype::canCreate()) {
-            $menu['options'][$option]['links']['add'] = $itemtype::getFormURL(false);
-         }
+      $menu['links']['search'] = PluginLdapcomputersComputer::getSearchURL(false);
+      if (PluginLdapcomputersComputer::canCreate()) {
+         $menu['links']['add'] = PluginLdapcomputersComputer::getFormURL(false);
       }
+      // Add icon for import
+      $img = Html::image($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/pics/import.png",
+                                      ['alt' => __('Import', 'ldapcomputers'), 'width' => '16', 'height' => '16']);
+      $menu['links'][$img] = "$front_ldapcomputers/ldap.import.php";
+
       return $menu;
    }
 }
