@@ -41,7 +41,7 @@
 
 include ('../../../inc/includes.php');
 
-Session::checkRight("plugin_ldapcomputers", UPDATE);
+Session::checkRight("plugin_ldapcomputers_view", UPDATE);
 
 $computer = new PluginLdapcomputersComputer();
 
