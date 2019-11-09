@@ -41,9 +41,9 @@
 
 include ('../../../inc/includes.php');
 
-Session::checkRight("plugin_ldapcomputers", READ);
+Session::checkRight("plugin_ldapcomputers_view", UPDATE);
 
-Html::header(PluginLdapcomputersComputer::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'admin', 'pluginldapcomputerscomputer', 'ldapcomputerscomputer');
+Html::header(PluginLdapcomputersComputer::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'admin', 'PluginLdapcomputersLdapcomputersmenu', 'ldapcomputerscomputer');
 
 $computer = new PluginLdapcomputersComputer();
 Search::show('PluginLdapcomputersComputer');
