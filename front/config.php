@@ -40,9 +40,9 @@
  */
 include ('../../../inc/includes.php');
 
-Session::checkRight("plugin_ldapcomputers_config", UPDATE);
+Session::checkRight("plugin_ldapcomputers_config", READ);
 
-Html::header(PluginLdapcomputersConfig::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'config', 'pluginldapcomputersconfigmenu', 'ldapcomputersconfig');
+Html::header(PluginLdapcomputersConfig::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'config', 'PluginLdapcomputersConfigmenu', 'ldapcomputersconfig');
 
 $config = new PluginLdapcomputersConfig();
 Search::show('PluginLdapcomputersConfig');
