@@ -86,8 +86,8 @@ function plugin_ldapcomputers_install() {
       $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_computers` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `name` varchar(255) NOT NULL,
-                  `lastLogon` datetime NOT NULL,
-                  `logonCount` int(11) NOT NULL,
+                  `lastLogon` datetime DEFAULT NULL,
+                  `logonCount` int(11) DEFAULT NULL,
                   `distinguishedName` text NOT NULL,
                   `plugin_ldapcomputers_states_id` int(11) NOT NULL DEFAULT 0,
                   `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
