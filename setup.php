@@ -63,13 +63,13 @@ function plugin_init_ldapcomputers() {
 
    if (Session::getLoginUserID()) {
       // Display a menu entry ?
-      if (Session::haveRight("plugin_ldapcomputers_config", UPDATE)) {
+      if (Session::haveRight("plugin_ldapcomputers_config", READ)) {
          // add link in plugin page
          $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
          // add entry to configuration menu
          $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['config'] = 'PluginLdapcomputersConfigmenu';
       }
-      if (Session::haveRight("plugin_ldapcomputers_view", UPDATE)) {
+      if (Session::haveRight("plugin_ldapcomputers_view", READ)) {
          // add entry to view computers menu
          $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['admin']  = 'PluginLdapcomputersLdapcomputersmenu';
       }
