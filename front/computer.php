@@ -41,7 +41,7 @@
 
 include ('../../../inc/includes.php');
 
-Session::checkRight("plugin_ldapcomputers_view", UPDATE);
+Session::checkRight("plugin_ldapcomputers_view", READ);
 
 Html::header(PluginLdapcomputersComputer::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 'admin', 'PluginLdapcomputersLdapcomputersmenu', 'ldapcomputerscomputer');
 
