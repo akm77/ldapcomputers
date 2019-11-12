@@ -85,7 +85,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       }
       $this->showFormHeader($options);
       echo "<tr class='tab_bg_1'><td><label for='name'>" . __('Name') . "</label></td>";
-      echo "<td><input type='text' readonly id='name' name='name' value='". $this->fields["name"] ."'></td>";
+      echo "<td><input type='text'  id='name' name='name' value='". $this->fields["name"] ."'></td>";
       if ($ID > 0) {
          echo "<td>".__('Last update')."</td><td>".Html::convDateTime($this->fields["date_mod"]);
       } else {
