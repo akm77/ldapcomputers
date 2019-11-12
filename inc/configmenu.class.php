@@ -43,21 +43,13 @@ class PluginLdapcomputersConfigmenu extends CommonGLPI {
 
    static $rightname = 'plugin_ldapcomputers_config';
 
-   static function canCreate() {
-      return static::canUpdate();
-   }
-
-   static function canPurge() {
-      return static::canUpdate();
-   }
-
    static function getMenuName() {
       return __("LDAP computers config", "ldapcomputers");
    }
 
    static function getMenuContent() {
 
-      if (!Session::haveRight('plugin_ldapcomputers_config', UPDATE)) {
+      if (!Session::haveRight('plugin_ldapcomputers_config', READ)) {
          return;
       }
 
@@ -65,17 +57,21 @@ class PluginLdapcomputersConfigmenu extends CommonGLPI {
       $menu = [];
       $menu['title'] = self::getMenuName();
       $menu['page']  = "$front_ldapcomputers/config.php";
+      $menu['links']['search'] = PluginLdapcomputersConfig::getSearchURL(false);
 
-      $itemtypes = ['PluginLdapcomputersConfig' => 'ldapcomputersconfig'];
-
-      foreach ($itemtypes as $itemtype => $option) {
-         $menu['options'][$option]['title']           = $itemtype::getTypeName(2);
-         $menu['options'][$option]['page']            = $itemtype::getSearchURL(false);
-         $menu['options'][$option]['links']['search'] = $itemtype::getSearchURL(false);
-         if ($itemtype::canCreate()) {
-            $menu['options'][$option]['links']['add'] = $itemtype::getFormURL(false);
-         }
+      if (PluginLdapcomputersConfig::canCreate()) {
+         $menu['links']['add'] = PluginLdapcomputersConfig::getFormURL(false);
       }
       return $menu;
    }
+
+   static function removeRightsFromSession() {
+      if (isset($_SESSION['glpimenu']['config']['types']['PluginLdapcomputersConfigmenu'])) {
+         unset($_SESSION['glpimenu']['config']['types']['PluginLdapcomputersConfigmenu']);
+      }
+      if (isset($_SESSION['glpimenu']['config']['content']['pluginldapcomputersconfigmenu'])) {
+         unset($_SESSION['glpimenu']['config']['content']['pluginldapcomputersconfigmenu']);
+      }
+   }
+
 }
