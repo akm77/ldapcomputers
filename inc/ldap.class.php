@@ -313,4 +313,117 @@ class PluginLdapcomputersLdap extends CommonDBTM {
       return (bool) preg_match('/^([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}$/', $guid_str);
    }
 
+   /**
+    * Manage values stored in session
+    *
+    * @param array   $options Options
+    * @param boolean $delete  (false by default)
+    *
+    * @return void
+    */
+   static function manageValuesInSession($options = [], $delete = false) {
+      $fields = ['action', 'primary_ldap_id', 'basedn', 'begin_date', 'criterias',  'end_date',
+                      'entities_id', 'interface', 'ldap_filter', 'mode'];
+      //If form accessed via modal, do not show expert mode link
+      // Manage new value is set : entity or mode
+      if (isset($options['entity'])
+          || isset($options['mode'])) {
+         if (isset($options['_in_modal']) && $options['_in_modal']) {
+            //If coming form the helpdesk form : reset all criterias
+            $_SESSION['ldap_import']['_in_modal']      = 1;
+            $_SESSION['ldap_import']['no_expert_mode'] = 1;
+            $_SESSION['ldap_import']['action']         = 'show';
+            $_SESSION['ldap_import']['interface']      = self::SIMPLE_INTERFACE;
+            $_SESSION['ldap_import']['mode']           = self::ACTION_IMPORT;
+         } else {
+            $_SESSION['ldap_import']['_in_modal']      = 0;
+            $_SESSION['ldap_import']['no_expert_mode'] = 0;
+         }
+      }
+      if (!$delete) {
+         if (!isset($_SESSION['ldap_import']['entities_id'])) {
+            $options['entities_id'] = $_SESSION['glpiactive_entity'];
+         }
+         if (isset($options['toprocess'])) {
+            $_SESSION['ldap_import']['action'] = 'process';
+         }
+         if (isset($options['change_directory'])) {
+            $options['ldap_filter'] = '';
+         }
+         if (!isset($_SESSION['ldap_import']['primary_ldap_id'])) {
+            $_SESSION['ldap_import']['primary_ldap_id'] = NOT_AVAILABLE;
+         }
+         if ((!Config::canUpdate()
+              && !Entity::canUpdate())
+             || (!isset($_SESSION['ldap_import']['interface'])
+                && !isset($options['interface']))) {
+            $options['interface'] = self::SIMPLE_INTERFACE;
+         }
+         foreach ($fields as $field) {
+            if (isset($options[$field])) {
+               $_SESSION['ldap_import'][$field] = $options[$field];
+            }
+         }
+         if (isset($_SESSION['ldap_import']['begin_date'])
+             && ($_SESSION['ldap_import']['begin_date'] == 'NULL')) {
+            $_SESSION['ldap_import']['begin_date'] = '';
+         }
+         if (isset($_SESSION['ldap_import']['end_date'])
+             && ($_SESSION['ldap_import']['end_date'] == 'NULL')) {
+            $_SESSION['ldap_import']['end_date'] = '';
+         }
+         if (!isset($_SESSION['ldap_import']['criterias'])) {
+            $_SESSION['ldap_import']['criterias'] = [];
+         }
+         $ldap_server = new self();
+         //Filter computation
+         if ($_SESSION['ldap_import']['interface'] == self::SIMPLE_INTERFACE) {
+            $entity = new Entity();
+            if ($entity->getFromDB($_SESSION['ldap_import']['entities_id'])
+                && ($entity->getField('primary_ldap_id') > 0)) {
+               $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+               $_SESSION['ldap_import']['primary_ldap_id'] = $entity->getField('primary_ldap_id');
+               $_SESSION['ldap_import']['basedn']       = $entity->getField('ldap_dn');
+               // No dn specified in entity : use standard one
+               if (empty($_SESSION['ldap_import']['basedn'])) {
+                  $_SESSION['ldap_import']['basedn'] = $ldap_server->getField('basedn');
+               }
+               if ($entity->getField('entity_ldapfilter') != NOT_AVAILABLE) {
+                  $_SESSION['ldap_import']['entity_filter']
+                     = $entity->getField('entity_ldapfilter');
+               }
+            } else {
+               if ($_SESSION['ldap_import']['primary_ldap_id'] == NOT_AVAILABLE
+                   || !$_SESSION['ldap_import']['primary_ldap_id']) {
+                     $_SESSION['ldap_import']['primary_ldap_id'] = self::getDefault();
+               }
+               if ($_SESSION['ldap_import']['primary_ldap_id'] > 0) {
+                  $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+                  $_SESSION['ldap_import']['basedn'] = $ldap_server->getField('basedn');
+               }
+            }
+            if ($_SESSION['ldap_import']['primary_ldap_id'] > 0) {
+               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($ldap_server);
+            }
+         } else {
+            if ($_SESSION['ldap_import']['primary_ldap_id'] == NOT_AVAILABLE
+                || !$_SESSION['ldap_import']['primary_ldap_id']) {
+               $_SESSION['ldap_import']['primary_ldap_id'] = self::getDefault();
+               if ($_SESSION['ldap_import']['primary_ldap_id'] > 0) {
+                  $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+                  $_SESSION['ldap_import']['basedn'] = $ldap_server->getField('basedn');
+               }
+            }
+            if (!isset($_SESSION['ldap_import']['ldap_filter'])
+                || $_SESSION['ldap_import']['ldap_filter'] == '') {
+               $ldap_server->getFromDB($_SESSION['ldap_import']['primary_ldap_id']);
+               $_SESSION['ldap_import']['basedn']      = $ldap_server->getField('basedn');
+               $_SESSION['ldap_import']['ldap_filter'] = self::buildLdapFilter($ldap_server);
+            }
+         }
+      } else { // Unset all values in session
+         unset($_SESSION['ldap_import']);
+      }
+   }
+
 }
