@@ -117,7 +117,7 @@ if (isset($_POST["update"])) {
    Html::back();
 }
 
-Html::header(PluginLdapcomputersConfig::getTypeName(1), $_SERVER['PHP_SELF'], 'config', 'pluginldapcomputersmenu', 'ldapcomputersconfig');
+Html::header(PluginLdapcomputersConfig::getTypeName(1), $_SERVER['PHP_SELF'], 'config', 'PluginLdapcomputersConfigmenu', 'ldapcomputersconfig');
 $config_ldap->display($_GET);
 
 Html::footer();
