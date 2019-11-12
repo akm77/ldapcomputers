@@ -40,16 +40,7 @@
  */
 
 class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
-
    static $rightname = 'plugin_ldapcomputers_view';
-
-   static function canCreate() {
-      return static::canUpdate();
-   }
-
-   static function canPurge() {
-      return static::canUpdate();
-   }
 
    static function getMenuName() {
       return __("View LDAP computers", "ldapcomputers");
@@ -58,7 +49,7 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
    static function getMenuContent() {
       global $CFG_GLPI;
 
-      if (!Session::haveRight('plugin_ldapcomputers_config', UPDATE)) {
+      if (!Session::haveRight('plugin_ldapcomputers_view', READ)) {
          return;
       }
 
@@ -69,12 +60,22 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
       $menu['links']['search'] = PluginLdapcomputersComputer::getSearchURL(false);
       if (PluginLdapcomputersComputer::canCreate()) {
          $menu['links']['add'] = PluginLdapcomputersComputer::getFormURL(false);
-      }
-      // Add icon for import
-      $img = Html::image($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/pics/import.png",
+         // Add icon for import
+         $img = Html::image($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/pics/import.png",
                                       ['alt' => __('Import', 'ldapcomputers'), 'width' => '16', 'height' => '16']);
-      $menu['links'][$img] = "$front_ldapcomputers/ldap.import.php";
+         $menu['links'][$img] = "$front_ldapcomputers/ldap.import.php";
+      }
 
       return $menu;
    }
+
+   static function removeRightsFromSession() {
+      if (isset($_SESSION['glpimenu']['admin']['types']['PluginLdapcomputersLdapcomputersmenu'])) {
+         unset($_SESSION['glpimenu']['admin']['types']['PluginLdapcomputersLdapcomputersmenu']);
+      }
+      if (isset($_SESSION['glpimenu']['admin']['content']['pluginldapcomputersldapcomputersmenu'])) {
+         unset($_SESSION['glpimenu']['admin']['content']['pluginldapcomputersldapcomputersmenu']);
+      }
+   }
+
 }
