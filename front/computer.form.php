@@ -71,7 +71,7 @@ if (isset($_POST["update"])) {
 }
 
 
-Html::header(PluginLdapcomputersComputer::getTypeName(1), $_SERVER['PHP_SELF'], 'admin', 'pluginldapcomputerscomputer', 'ldapcomputerscomputer');
+Html::header(PluginLdapcomputersComputer::getTypeName(1), $_SERVER['PHP_SELF'], 'admin', 'PluginLdapcomputersLdapcomputersmenu', 'ldapcomputerscomputer');
 $computer->display($_GET);
 
 Html::footer();
