@@ -564,69 +564,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    /**
-    * Display LDAP filter
-    *
-    * @param string  $target target for the form
-    * @param boolean $users  for user? (true by default)
-    *
-    * @return void
-    */
-   static function displayLdapFilter($target, $users = true) {
-      $config_ldap = new self();
-      if (!isset($_SESSION['ldap_server'])) {
-         throw new \RuntimeException('LDAP server must be set!');
-      }
-      $config_ldap->getFromDB($_SESSION['ldap_server']);
-      if ($users) {
-         $filter_name1 = "condition";
-         $filter_var   = "ldap_filter";
-      } else {
-         $filter_var = "ldap_group_filter";
-         switch ($config_ldap->fields["group_search_type"]) {
-            case self::GROUP_SEARCH_USER:
-               $filter_name1 = "condition";
-               break;
-            case self::GROUP_SEARCH_GROUP:
-               $filter_name1 = "group_condition";
-               break;
-            case self::GROUP_SEARCH_BOTH:
-               $filter_name1 = "group_condition";
-               $filter_name2 = "condition";
-               break;
-         }
-      }
-      if (!isset($_SESSION[$filter_var]) || ($_SESSION[$filter_var] == '')) {
-         $_SESSION[$filter_var] = $config_ldap->fields[$filter_name1];
-      }
-      echo "<div class='center'>";
-      echo "<form method='post' action='$target'>";
-      echo "<table class='tab_cadre_fixe'>";
-      echo "<tr><th colspan='2'>" . ($users?__('Search filter for users')
-                                           :__('Filter to search in groups')) . "</th></tr>";
-      echo "<tr class='tab_bg_2'><td class='center'>";
-      echo "<input type='text' name='ldap_filter' value='". $_SESSION[$filter_var] ."' size='70'>";
-      //Only display when looking for groups in users AND groups
-      if (!$users
-          && ($config_ldap->fields["group_search_type"] == self::GROUP_SEARCH_BOTH)) {
-         if (!isset($_SESSION["ldap_group_filter2"]) || ($_SESSION["ldap_group_filter2"] == '')) {
-            $_SESSION["ldap_group_filter2"] = $config_ldap->fields[$filter_name2];
-         }
-         echo "</td></tr>";
-         echo "<tr><th colspan='2'>" . __('Search filter for users') . "</th></tr>";
-         echo "<tr class='tab_bg_2'><td class='center'>";
-         echo "<input type='text' name='ldap_filter2' value='".$_SESSION["ldap_group_filter2"]."'
-                size='70'></td></tr>";
-      }
-      echo "<tr class='tab_bg_2'><td class='center'>";
-      echo "<input class=submit type='submit' name='change_ldap_filter' value=\"".
-             _sx('button', 'Post')."\"></td></tr>";
-      echo "</table>";
-      Html::closeForm();
-      echo "</div>";
-   }
-
-
-   /**
     * Display a warnign about size limit
     *
     * @since 0.84
