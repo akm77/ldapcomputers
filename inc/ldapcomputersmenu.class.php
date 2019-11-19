@@ -49,7 +49,7 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
    static function getMenuContent() {
       global $CFG_GLPI;
 
-      if (!Session::haveRight('plugin_ldapcomputers_view', READ)) {
+      if (!Session::haveRightsOr("plugin_ldapcomputers_view", [READ, UPDATE])) {
          return;
       }
 
