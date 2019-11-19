@@ -108,13 +108,11 @@ class PluginLdapcomputersProfile extends Profile {
                       'label'     => __('View LDAP computers', 'ldapcomputers'),
                       'field'     => 'plugin_ldapcomputers_view']
                   ];
-
       return $a_rights;
    }
 
    static function addDefaultProfileInfos($profiles_id, $rights) {
       $profileRight = new ProfileRight();
-
       foreach ($rights as $right => $value) {
          if (!countElementsInTable('glpi_profilerights',
                                    ['profiles_id' => $profiles_id, 'name' => $right])) {
@@ -122,7 +120,6 @@ class PluginLdapcomputersProfile extends Profile {
             $myright['name']        = $right;
             $myright['rights']      = $value;
             $profileRight->add($myright);
-
             //Add right to the current session
             $_SESSION['glpiactiveprofile'][$right] = $value;
          }
@@ -133,9 +130,7 @@ class PluginLdapcomputersProfile extends Profile {
     * @param $profiles_id  integer
     */
    static function createFirstAccess($profiles_id) {
-
       $profile = new self();
-
       foreach ($profile->getAllRights() as $right) {
          self::addDefaultProfileInfos($profiles_id,
                                       [$right['field'] => ALLSTANDARDRIGHT]);
@@ -199,6 +194,7 @@ class PluginLdapcomputersProfile extends Profile {
       $pfProfile = new self();
       $profile   = new Profile();
       $a_rights  = $pfProfile->getAllRights();
+      Toolbox::logInFile('profile', "initProfile " . "\n");
 
       foreach ($a_rights as $data) {
          if (!countElementsInTable("glpi_profilerights", ['name' => $data['field']])) {
@@ -224,7 +220,7 @@ class PluginLdapcomputersProfile extends Profile {
                }
                foreach (array_keys($rights) as $right) {
                   $dataprofile['_'.$info['field']][$right] = 1;
-                  $_SESSION['glpiactiveprofile'][$data['field']] = $right;
+                  $_SESSION['glpiactiveprofile'][$info['field']] = $rights;
                }
             }
          }
