@@ -48,9 +48,6 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginLdapcomputersConfig extends CommonDBTM {
 
-   const SIMPLE_INTERFACE = 'simple';
-   const EXPERT_INTERFACE = 'expert';
-
    // From CommonDBTM
    public $dohistory = true;
 
@@ -280,7 +277,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       echo "<td>" . __('LDAP directory time zone') . "</td><td>";
       Dropdown::showGMT("time_offset", $this->fields["time_offset"]);
       echo"</td></tr>";
-      if (self::isLdapPageSizeAvailable(false, false)) {
+      if (PluginLdapcomputersLdap::isLdapPageSizeAvailable(false, false)) {
          echo "<tr class='tab_bg_1'>";
          echo "<td>" . __('Use paged results') . "</td><td>";
          Dropdown::showYesNo('can_support_pagesize', $this->fields["can_support_pagesize"]);
@@ -386,7 +383,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo $header_begin.$header_bottom.$header_end;
          echo "</table>";
          $massiveactionparams['ontop'] = false;
-         Toolbox::logInFile('massaction', json_encode($massiveactionparams));
          Html::showMassiveActions($massiveactionparams);
          Html::closeForm();
          echo "</div>";
@@ -624,7 +620,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       if (count($iterator) == 1) {
          //If only one server, do not show the choose ldap server window
          $ldap                    = $iterator->next();
-         $_SESSION["ldap_server"] = $ldap["id"];
+         $_SESSION['ldap_computers_import']['primary_ldap_id'] = $ldap["id"];
          Html::redirect($_SERVER['PHP_SELF']);
       }
       echo "<div class='center'>";
@@ -642,7 +638,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                              'condition'           => ['is_active' => 1]]);
          echo "</td></tr>";
          echo "<tr class='tab_bg_2'><td class='center' colspan='2'>";
-         echo "<input class='submit' type='submit' name='ldap_showusers' value=\"".
+         echo "<input class='submit' type='submit' name='ldap_showcomputers' value=\"".
                _sx('button', 'Post') . "\"></td></tr>";
       } else {
          //No ldap server
@@ -786,34 +782,16 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       global $DB;
       $backup_ldaps = [];
       $criteria = ['FIELDS' => ['id', 'host', 'port'],
-                'FROM'   => 'glpi_plugin_ldapcomputers_ldapbackups',
-                'WHERE'  => ['primary_ldap_id' => $master_id]
-               ];
+                   'FROM'   => 'glpi_plugin_ldapcomputers_ldapbackups',
+                   'WHERE'  => ['primary_ldap_id' => $master_id]
+                  ];
       foreach ($DB->request($criteria) as $backup_ldap) {
          $backup_ldaps[] = ["id"   => $backup_ldap["id"],
-                          "host" => $backup_ldap["host"],
-                          "port" => $backup_ldap["port"]
-                         ];
+                            "host" => $backup_ldap["host"],
+                            "port" => $backup_ldap["port"]
+                           ];
       }
       return $backup_ldaps;
-   }
-
-   /**
-    * Check if ldap results can be paged or not
-    * This functionnality is available for PHP 5.4 and higher
-    *
-    * @since 0.84
-    *
-    * @param object  $config_ldap        LDAP configuration
-    * @param boolean $check_config_value Whether to check config values
-    *
-    * @return boolean true if maxPageSize can be used, false otherwise
-    */
-   static function isLdapPageSizeAvailable($config_ldap, $check_config_value = true) {
-      return ((!$check_config_value
-               || ($check_config_value && $config_ldap->fields['can_support_pagesize']))
-                  && function_exists('ldap_control_paged_result')
-                     && function_exists('ldap_control_paged_result_response'));
    }
 
 }
