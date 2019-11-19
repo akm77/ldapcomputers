@@ -58,18 +58,18 @@ function plugin_init_ldapcomputers() {
 
    /* Init current profile */
    Plugin::registerClass('PluginLdapcomputersProfile', ['addtabon' => ['Profile']]);
-   $PLUGIN_HOOKS['change_profile']['ldapcomputers'] = ['PluginLdapcomputersProfile', 'initProfile'];
+   //$PLUGIN_HOOKS['change_profile']['ldapcomputers'] = ['PluginLdapcomputersProfile', 'initProfile'];
    $PLUGIN_HOOKS['use_massive_action']['ldapcomputers'] = 1;
 
    if (Session::getLoginUserID()) {
       // Display a menu entry ?
-      if (Session::haveRight("plugin_ldapcomputers_config", READ)) {
+      if (Session::haveRightsOr("plugin_ldapcomputers_config", [READ, UPDATE])) {
          // add link in plugin page
          $PLUGIN_HOOKS['config_page']['ldapcomputers'] = 'front/config.php';
          // add entry to configuration menu
          $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['config'] = 'PluginLdapcomputersConfigmenu';
       }
-      if (Session::haveRight("plugin_ldapcomputers_view", READ)) {
+      if (Session::haveRightsOr("plugin_ldapcomputers_view", [READ, UPDATE])) {
          // add entry to view computers menu
          $PLUGIN_HOOKS["menu_toadd"]['ldapcomputers']['admin']  = 'PluginLdapcomputersLdapcomputersmenu';
       }
