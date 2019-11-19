@@ -71,7 +71,6 @@ if (isset($_POST["update"])) {
 
 } else if (isset($_POST["purge"])) {
    $config_ldap->delete($_POST, 1);
-   //$_SESSION['glpi_authconfig'] = 1;
    $config_ldap->redirectToList();
 
 } else if (isset($_POST["test_ldap"])) {
