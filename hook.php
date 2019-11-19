@@ -89,13 +89,15 @@ function plugin_ldapcomputers_install() {
                   `lastLogon` datetime DEFAULT NULL,
                   `logonCount` int(11) DEFAULT NULL,
                   `distinguishedName` text NOT NULL,
+                  `objectGUID` varchar(255) DEFAULT NULL,
                   `plugin_ldapcomputers_states_id` int(11) NOT NULL DEFAULT 0,
                   `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
                   `date_creation` datetime NOT NULL,
                   `date_mod` datetime NOT NULL,
                   PRIMARY KEY (`id`),
                   KEY `date_mod` (`date_mod`),
-                  KEY `name` (`name`)
+                  KEY `name` (`name`),
+                  KEY `objectGUID` (`objectGUID`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
@@ -132,9 +134,6 @@ function plugin_ldapcomputers_install() {
 
    //execute the whole migration
    $migration->executeMigration();
-
-   PluginLdapcomputersProfile::initProfile();
-
    return true;
 }
 
