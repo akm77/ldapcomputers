@@ -81,6 +81,24 @@ class PluginLdapcomputersLdap extends CommonDBTM {
    }
 
    /**
+    * Converts LDAP Windows FILETIME timestamp over to Unix timestamps
+    *
+    * @param string  $ldapstamp        LDAP timestamp
+    * @param integer $ldap_time_offset time offset (default 0)
+    *
+    * @return integer unix timestamp
+    */
+
+   static function ldapFiletime2Timestamp ($ldapstamp, $ldap_time_offset = 0) {
+      global $CFG_GLPI;
+
+      $win_secs = substr($ldapstamp, 0, strlen($ldapstamp)-7); // divide by 10 000 000 to get seconds
+      $unix_timestamp = ($win_secs - 11644473600); // 1.1.1600 -> 1.1.1970 difference in seconds
+      $unix_timestamp += $CFG_GLPI["time_offset"]-$ldap_time_offset;
+      return $unix_timestamp;
+   }
+
+      /**
     * Converts a Unix timestamp to an LDAP timestamps
     *
     * @param string $date datetime
@@ -116,10 +134,39 @@ class PluginLdapcomputersLdap extends CommonDBTM {
             }
          }
          // Auth bind
+         set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            if($errno === E_WARNING){
+                // make it more serious than a warning so it can be caught
+                trigger_error($errstr, E_ERROR);
+                return true;
+            } else {
+                // fallback to default php error handler
+                return false;
+            }
+         });
+
          if ($login != '') {
-            $b = @ldap_bind($ds, $login, $password);
+            try {
+               $b = @ldap_bind($ds, $login, $password);
+            }
+            catch (\Exception  $e) {
+               Toolbox::logError($e->getMessage());
+               return false;
+            }
+            finally {
+               restore_error_handler();
+            }
          } else { // Anonymous bind
-            $b = @ldap_bind($ds);
+            try {
+               $b = @ldap_bind($ds);
+            }
+            catch (\Exception  $e) {
+               Toolbox::logError($e->getMessage());
+               return false;
+            }
+            finally {
+               restore_error_handler();
+            }
          }
          if ($b) {
             return $ds;
@@ -138,32 +185,31 @@ class PluginLdapcomputersLdap extends CommonDBTM {
     * @return resource|boolean link to the LDAP server : false if connection failed
     */
    static function tryToConnectToServer($ldap_method, $login, $password) {
+
       if (!function_exists('ldap_connect')) {
          Toolbox::logError("ldap_connect function is missing. Did you miss install php-ldap extension?");
          return false;
       }
-      $ds = self::connectToServer($ldap_method['host'], $ldap_method['port'],
-      $ldap_method['rootdn'],
-      Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
-      $ldap_method['use_tls'], $ldap_method['deref_option']);
+      $ds = self::connectToServer($ldap_method['host'], $ldap_method['port'], $ldap_method['rootdn'],
+                                  Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
+                                  $ldap_method['use_tls'], $ldap_method['deref_option']);
       // Test with login and password of the user if exists
       if (!$ds && !empty($login)) {
          $ds = self::connectToServer($ldap_method['host'], $ldap_method['port'], $login,
-         $password, $ldap_method['use_tls'],
-         $ldap_method['deref_option']);
+                                     $password,
+                                     $ldap_method['use_tls'], $ldap_method['deref_option']);
       }
       //If connection is not successfull on this directory, try LDAP backups (if backups exists)
       if (!$ds && ($ldap_method['id'] > 0)) {
          foreach (PluginLdapcomputersConfig::getAllBackupsForAMaster($ldap_method['id']) as $backup_ldap) {
-            $ds = self::connectToServer($backup_ldap["host"], $backup_ldap["port"],
-            $ldap_method['rootdn'],
-            Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
-            $ldap_method['use_tls'], $ldap_method['deref_option']);
+            $ds = self::connectToServer($backup_ldap["host"], $backup_ldap["port"], $ldap_method['rootdn'],
+                                        Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
+                                        $ldap_method['use_tls'], $ldap_method['deref_option']);
             // Test with login and password of the user
             if (!$ds && !empty($login)) {
                $ds = self::connectToServer($backup_ldap["host"], $backup_ldap["port"], $login,
-               $password, $ldap_method['use_tls'],
-               $ldap_method['deref_option']);
+                                           $password,
+                                           $ldap_method['use_tls'], $ldap_method['deref_option']);
             }
             if ($ds) {
                return $ds;
@@ -202,8 +248,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
       }
       $ds = self::connectToServer($host, $port, $config_ldap->fields['rootdn'],
                                   Toolbox::decrypt($config_ldap->fields['rootdn_passwd'], GLPIKEY),
-                                  $config_ldap->fields['use_tls'],
-                                  $config_ldap->fields['deref_option']);
+                                  $config_ldap->fields['use_tls'], $config_ldap->fields['deref_option']);
       if ($ds) {
          return true;
       }
@@ -310,6 +355,24 @@ class PluginLdapcomputersLdap extends CommonDBTM {
    }
 
    /**
+    * Check if ldap results can be paged or not
+    * This functionnality is available for PHP 5.4 and higher
+    *
+    * @since 0.84
+    *
+    * @param object  $config_ldap        LDAP configuration
+    * @param boolean $check_config_value Whether to check config values
+    *
+    * @return boolean true if maxPageSize can be used, false otherwise
+    */
+   static function isLdapPageSizeAvailable($config_ldap, $check_config_value = true) {
+      return ((!$check_config_value
+               || ($check_config_value && $config_ldap->fields['can_support_pagesize']))
+                  && function_exists('ldap_control_paged_result')
+                     && function_exists('ldap_control_paged_result_response'));
+   }
+
+   /**
     * Check if text representation of an objectguid is valid
     *
     * @param string $string Strign representation
@@ -329,7 +392,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
     * @return void
     */
    static function manageValuesInSession($options = [], $delete = false) {
-      $fields = ['action', 'primary_ldap_id', 'basedn', 'entities_id'];
+      $fields = ['action', 'primary_ldap_id'];
 
       if (isset($options['entity'])) {
          if (isset($options['_in_modal']) && $options['_in_modal']) {
@@ -341,9 +404,6 @@ class PluginLdapcomputersLdap extends CommonDBTM {
          }
       }
       if (!$delete) {
-         if (!isset($_SESSION['ldap_computers_import']['entities_id'])) {
-            $options['entities_id'] = $_SESSION['glpiactive_entity'];
-         }
          if (isset($options['toprocess'])) {
             $_SESSION['ldap_computers_import']['action'] = 'process';
          }
@@ -361,10 +421,6 @@ class PluginLdapcomputersLdap extends CommonDBTM {
          if ($_SESSION['ldap_computers_import']['primary_ldap_id'] == NOT_AVAILABLE
             || !$_SESSION['ldap_computers_import']['primary_ldap_id']) {
                 $_SESSION['ldap_computers_import']['primary_ldap_id'] = PluginLdapcomputersConfig::getDefault();
-            if ($_SESSION['ldap_computers_import']['primary_ldap_id'] > 0) {
-                  $ldap_server->getFromDB($_SESSION['ldap_computers_import']['primary_ldap_id']);
-                  $_SESSION['ldap_computers_import']['basedn'] = $ldap_server->getField('basedn');
-            }
          }
       } else { // Unset all values in session
          unset($_SESSION['ldap_computers_import']);
