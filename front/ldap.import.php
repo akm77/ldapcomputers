@@ -51,26 +51,21 @@ if (isset($_SESSION['ldap_computers_import']['_in_modal']) && $_SESSION['ldap_co
 
 Html::header(__('LDAP directory link'), $_SERVER['PHP_SELF'], 'admin', 'PluginLdapcomputersLdapcomputersmenu', 'ldapcomputerscomputer');
 
-if (isset($_GET['start'])) {
-   $_SESSION['ldap_computers_import']['start'] = $_GET['start'];
-}
-if (isset($_GET['order'])) {
-   $_SESSION['ldap_computers_import']['order'] = $_GET['order'];
-}
-if ($_SESSION['ldap_computers_import']['action'] == 'show') {
 
-   $ldap_server = new PluginLdapcomputersConfig();
-   $ldap_server->getFromDB($_SESSION['ldap_computers_import']['primary_ldap_id']);
+$ldap_server = new PluginLdapcomputersConfig();
+$ldap_server->getFromDB($_SESSION['ldap_computers_import']['primary_ldap_id']);
 
-   PluginLdapcomputersComputer::showComputersImportForm($ldap_server);
+PluginLdapcomputersComputer::showComputersImportForm($ldap_server);
 
-   if (isset($_SESSION['ldap_computers_import']['primary_ldap_id'])
-      && ($_SESSION['ldap_computers_import']['primary_ldap_id'] != NOT_AVAILABLE)
-      && (isset($_POST['search']) || isset($_GET['start']) || isset($_POST['glpilist_limit']))) {
+if (isset($_SESSION['ldap_computers_import']['primary_ldap_id'])
+   && ($_SESSION['ldap_computers_import']['primary_ldap_id'] != NOT_AVAILABLE)
+   && (isset($_POST['search']))) {
 
-      echo "<br />";
-      PluginLdapcomputersComputer::searchComputers($ldap_server);
-   }
+   echo "<br />";
+   Html::createProgressBar(__('Work in progress...'));
+   PluginLdapcomputersComputer::searchComputers($ldap_server);
+   Html::changeProgressBarPosition(1, 1, __('Task completed.'));
+   //HTML::redirect($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/front/computer.php");
 }
 
 Html::footer();
