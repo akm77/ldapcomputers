@@ -312,6 +312,16 @@ class PluginLdapcomputersConfig extends CommonDBTM {
       Dropdown::showFromArray("deref_option", $alias_options,
                               ['value' => $this->fields["deref_option"]]);
       echo"</td></tr>";
+
+      echo "<tr class='tab_bg_1'>";
+      echo "<td>" . __('How long to keep outdated computers', 'ldapcomputers') . "</td><td colspan='4'>";
+      Dropdown::showNumber("retention_date", ['value' => $this->fields['retention_date'],
+                                              'min'   => 5,
+                                              'max'   => 365,
+                                              'step'  => 5]);
+      echo"</td></tr>";
+
+
       echo "<tr class='tab_bg_2'><td class='center' colspan='4'>";
       echo "<input type='submit' name='update' class='submit' value=\"".__s('Save')."\">";
       echo $hidden;
@@ -482,6 +492,14 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'field'              => 'is_default',
          'name'               => __('Default server'),
          'datatype'           => 'bool',
+         'massiveaction'      => false
+      ];
+      $tab[] = [
+         'id'                 => '8',
+         'table'              => $this->getTable(),
+         'field'              => 'retention_date',
+         'name'               => __('Delete after days'),
+         'datatype'           => 'integer',
          'massiveaction'      => false
       ];
       $tab[] = [
