@@ -47,13 +47,6 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginLdapcomputersLdap extends CommonDBTM {
 
-   const SIMPLE_INTERFACE = 'simple';
-   const EXPERT_INTERFACE = 'expert';
-
-   const ACTION_IMPORT      = 0;
-   const ACTION_SYNCHRONIZE = 1;
-   const ACTION_ALL         = 2;
-
    /**
     * Converts LDAP timestamps over to Unix timestamps
     *
@@ -392,21 +385,9 @@ class PluginLdapcomputersLdap extends CommonDBTM {
     * @return void
     */
    static function manageValuesInSession($options = [], $delete = false) {
-      $fields = ['action', 'primary_ldap_id'];
+      $fields = ['primary_ldap_id'];
 
-      if (isset($options['entity'])) {
-         if (isset($options['_in_modal']) && $options['_in_modal']) {
-            //If coming form the helpdesk form : reset all criterias
-            $_SESSION['ldap_computers_import']['_in_modal']      = 1;
-            $_SESSION['ldap_computers_import']['action']         = 'show';
-         } else {
-            $_SESSION['ldap_computers_import']['_in_modal']      = 0;
-         }
-      }
       if (!$delete) {
-         if (isset($options['toprocess'])) {
-            $_SESSION['ldap_computers_import']['action'] = 'process';
-         }
          if (!isset($_SESSION['ldap_computers_import']['primary_ldap_id'])) {
             $_SESSION['ldap_computers_import']['primary_ldap_id'] = NOT_AVAILABLE;
          }
@@ -415,8 +396,6 @@ class PluginLdapcomputersLdap extends CommonDBTM {
                $_SESSION['ldap_computers_import'][$field] = $options[$field];
             }
          }
-
-         $ldap_server = new PluginLdapcomputersConfig();
 
          if ($_SESSION['ldap_computers_import']['primary_ldap_id'] == NOT_AVAILABLE
             || !$_SESSION['ldap_computers_import']['primary_ldap_id']) {
