@@ -50,7 +50,6 @@ function plugin_ldapcomputers_install() {
                   `use_dn` tinyint(1) NOT NULL DEFAULT 1,
                   `time_offset` int(11) NOT NULL DEFAULT 0 COMMENT "in seconds",
                   `deref_option` int(11) NOT NULL DEFAULT 0,
-                  `date_mod` datetime DEFAULT NULL,
                   `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
                   `is_default` tinyint(1) NOT NULL DEFAULT 0,
                   `is_active` tinyint(1) NOT NULL DEFAULT 0,
@@ -58,7 +57,9 @@ function plugin_ldapcomputers_install() {
                   `pagesize` int(11) NOT NULL DEFAULT 0,
                   `ldap_maxlimit` int(11) NOT NULL DEFAULT 0,
                   `can_support_pagesize` tinyint(1) NOT NULL DEFAULT 0,
+                  `retention_date` int(11) DEFAULT 10,
                   `date_creation` datetime DEFAULT NULL,
+                  `date_mod` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   KEY `date_mod` (`date_mod`),
                   KEY `is_default` (`is_default`),
@@ -121,9 +122,9 @@ function plugin_ldapcomputers_install() {
 
    $state = new PluginLdapcomputersState();
    $table = $state->getTable();
-   foreach ([$state::LDAP_STATUS_NEW     => __("New", "ldapcomputers"),
-             $state::LDAP_STATUS_ACTIVE  => __("Active", "ldapcomputers"),
-             $state::LDAP_STATUS_DELETED => __("Deleted", "ldapcomputers"),
+   foreach ([$state::LDAP_STATUS_NEW      => __("New", "ldapcomputers"),
+             $state::LDAP_STATUS_ACTIVE   => __("Active", "ldapcomputers"),
+             $state::LDAP_STATUS_NOTFOUND => __("Not found", "ldapcomputers"),
             ] as $id => $label) {
       if (!countElementsInTable($table, ['id' => $id])) {
          $state->add(['id'   => $id,
