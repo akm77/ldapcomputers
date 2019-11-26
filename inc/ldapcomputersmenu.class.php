@@ -62,8 +62,8 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
          $menu['links']['add'] = PluginLdapcomputersComputer::getFormURL(false);
          // Add icon for import
          $img = Html::image($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/pics/import.png",
-                                      ['alt' => __('Import', 'ldapcomputers'), 'width' => '16', 'height' => '16']);
-         $menu['links'][$img] = "$front_ldapcomputers/ldap.import.php?action=show";
+                                      ['alt' => __('Get computers', 'ldapcomputers'), 'width' => '16', 'height' => '16']);
+         $menu['links'][$img] = "$front_ldapcomputers/ldap.import.php";
       }
 
       return $menu;
