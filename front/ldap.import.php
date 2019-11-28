@@ -65,7 +65,7 @@ if (isset($_SESSION['ldap_computers_import']['primary_ldap_id'])
    Html::createProgressBar(__('Work in progress...'));
    PluginLdapcomputersComputer::searchComputers($ldap_server);
    Html::changeProgressBarPosition(1, 1, __('Task completed.'));
-   //HTML::redirect($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/front/computer.php");
+   HTML::redirect($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/front/computer.php");
 }
 
 Html::footer();
