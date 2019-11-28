@@ -320,8 +320,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
                                               'max'   => 365,
                                               'step'  => 5]);
       echo"</td></tr>";
-
-
       echo "<tr class='tab_bg_2'><td class='center' colspan='4'>";
       echo "<input type='submit' name='update' class='submit' value=\"".__s('Save')."\">";
       echo $hidden;
