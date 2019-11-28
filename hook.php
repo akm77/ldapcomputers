@@ -135,6 +135,10 @@ function plugin_ldapcomputers_install() {
 
    //execute the whole migration
    $migration->executeMigration();
+
+   PluginLdapcomputersProfile::initProfile();
+   PluginLdapcomputersProfile::createFirstAccess($_SESSION['glpiactiveprofile']['id']);
+
    return true;
 }
 
@@ -175,7 +179,7 @@ function plugin_ldapcomputers_uninstall() {
    $tables = [
       'configs',
       'computers',
-      'ldap_backups',
+      'ldapbackups',
       'states',
    ];
 
