@@ -194,7 +194,6 @@ class PluginLdapcomputersProfile extends Profile {
       $pfProfile = new self();
       $profile   = new Profile();
       $a_rights  = $pfProfile->getAllRights();
-      Toolbox::logInFile('profile', "initProfile " . "\n");
 
       foreach ($a_rights as $data) {
          if (!countElementsInTable("glpi_profilerights", ['name' => $data['field']])) {
