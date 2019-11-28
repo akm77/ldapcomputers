@@ -58,6 +58,7 @@ function plugin_init_ldapcomputers() {
 
    /* Init current profile */
    Plugin::registerClass('PluginLdapcomputersProfile', ['addtabon' => ['Profile']]);
+   Plugin::registerClass('PluginLdapcomputersComputer', ['addtabon' => ['Computer']]);
    //$PLUGIN_HOOKS['change_profile']['ldapcomputers'] = ['PluginLdapcomputersProfile', 'initProfile'];
    $PLUGIN_HOOKS['use_massive_action']['ldapcomputers'] = 1;
 
