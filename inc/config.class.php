@@ -496,7 +496,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          'id'                 => '8',
          'table'              => $this->getTable(),
          'field'              => 'retention_date',
-         'name'               => __('Delete after days'),
+         'name'               => __('Delete after days', 'ldapcomputers'),
          'datatype'           => 'integer',
          'massiveaction'      => false
       ];
