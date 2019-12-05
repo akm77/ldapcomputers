@@ -91,6 +91,12 @@ function plugin_ldapcomputers_install() {
                   `logonCount` int(11) DEFAULT NULL,
                   `distinguishedName` text NOT NULL,
                   `objectGUID` varchar(255) DEFAULT NULL,
+                  `operatingSystem` varchar(255) DEFAULT NULL,
+                  `operatingSystemHotfix` varchar(255) DEFAULT NULL,
+                  `operatingSystemServicePack` varchar(255) DEFAULT NULL,
+                  `operatingSystemVersion` varchar(255) DEFAULT NULL,
+                  `whenChanged` datetime DEFAULT NULL,
+                  `whenCreated` datetime DEFAULT NULL,
                   `plugin_ldapcomputers_states_id` int(11) NOT NULL DEFAULT 0,
                   `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
                   `date_creation` datetime NOT NULL,
@@ -138,6 +144,9 @@ function plugin_ldapcomputers_install() {
 
    PluginLdapcomputersProfile::initProfile();
    PluginLdapcomputersProfile::createFirstAccess($_SESSION['glpiactiveprofile']['id']);
+
+   CronTask::Register('PluginLdapcomputersComputer', 'LdapComputersDeleteOutdatedComputers', DAY_TIMESTAMP);
+   CronTask::Register('PluginLdapcomputersComputer', 'LdapComputersGetComputers', DAY_TIMESTAMP);
 
    return true;
 }
@@ -194,6 +203,7 @@ function plugin_ldapcomputers_uninstall() {
    }
 
    PluginLdapcomputersProfile::removeRights();
+   CronTask::Unregister('ldapcomputers');
 
    return true;
 }
