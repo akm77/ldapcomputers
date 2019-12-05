@@ -44,7 +44,7 @@ if (!defined('GLPI_ROOT')) {
 }
 
 /**
- *  Class used to view and import LDAP computers
+ *  Class used to view and get LDAP computers
  */
 class PluginLdapcomputersComputer extends CommonDBTM {
 
@@ -141,16 +141,6 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          Html::closeForm();
          echo "</div>";
       }
-   }
-
-   /**
-    * Show LDAP computers on Computer Item tab
-    *
-    * @var int $ID ID of the item
-    *
-    * @return void
-    */
-   function showOnComputerItemTab($ID) {
    }
 
    /**
@@ -487,7 +477,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
     *
     * @param int $days delete outdated computers after given days
     *
-    * @return void
+    * @return mysqli_result|boolean Query result handler
     */
    static function deleteOutdatedComputers($days = 10) {
       global $DB;
@@ -502,7 +492,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
    /**
     * Update computer status in databse
     *
-    * @param array $ldap_computers computer
+    * @param array $ldap_computers Computer list from LDAP
     *
     * @return void
     */
@@ -600,9 +590,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
     *
     * @param array   $options       possible options:
     *          - basedn force basedn (default authldaps_id one)
-    *          - order display order
     *          - script true if called by an external script
-    * @param array   $results       result stats
     * @param boolean $limitexceeded limit exceeded exception
     *
     * @return array of the computer
@@ -661,14 +649,13 @@ class PluginLdapcomputersComputer extends CommonDBTM {
    /**
     * Search computers
     *
-    * @param resource $ds            An LDAP link identifier
-    * @param array    $values        values to search
-    * @param string   $filter        search filter
-    * @param array    $attrs         An array of the required attributes
-    * @param boolean  $limitexceeded is limit exceeded
-    * @param array    $user_infos    user informations
-    * @param array    $ldap_users    ldap users
-    * @param object   $config_ldap   ldap configuration
+    * @param resource $ds             An LDAP link identifier
+    * @param array    $values         values to search
+    * @param string   $filter         search filter
+    * @param array    $attrs          An array of the required attributes
+    * @param boolean  $limitexceeded  is limit exceeded
+    * @param array    $computer_infos Computer informations
+    * @param object   $config_ldap    ldap configuration
     *
     * @return boolean
     */
@@ -799,7 +786,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
    }
 
    /**
-    * Does LDAP user already exists in the database?
+    * Does LDAP computer already exists in the database?
     *
     * @param string $name Computer name
     *
