@@ -597,27 +597,6 @@ class PluginLdapcomputersConfig extends CommonDBTM {
    }
 
    /**
-    * Check if a user DN exists in a ldap user search result
-    *
-    * @since 0.84
-    *
-    * @param array  $ldap_infos ldap user search result
-    * @param string $user_dn    user dn to look for
-    *
-    * @return boolean false if the user dn doesn't exist, user ldap infos otherwise
-    */
-   static function dnExistsInLdap($ldap_infos, $user_dn) {
-      $found = false;
-      foreach ($ldap_infos as $ldap_info) {
-         if ($ldap_info['user_dn'] == $user_dn) {
-            $found = $ldap_info;
-            break;
-         }
-      }
-      return $found;
-   }
-
-   /**
     * Form to choose a ldap server
     *
     * @param string $target target page for the form
