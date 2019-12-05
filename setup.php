@@ -39,7 +39,7 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.2');
+define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.0.3');
 // Minimal GLPI version, inclusive
 define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
 // Maximum GLPI version, exclusive
@@ -56,10 +56,10 @@ function plugin_init_ldapcomputers() {
 
    $PLUGIN_HOOKS['csrf_compliant']['ldapcomputers'] = true;
 
-   /* Init current profile */
+   /* Setup tabs on objects */
    Plugin::registerClass('PluginLdapcomputersProfile', ['addtabon' => ['Profile']]);
    Plugin::registerClass('PluginLdapcomputersComputer', ['addtabon' => ['Computer']]);
-   //$PLUGIN_HOOKS['change_profile']['ldapcomputers'] = ['PluginLdapcomputersProfile', 'initProfile'];
+   /* Enable massive action*/
    $PLUGIN_HOOKS['use_massive_action']['ldapcomputers'] = 1;
 
    if (Session::getLoginUserID()) {
