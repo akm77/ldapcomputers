@@ -1,0 +1,141 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-12-04 15:43+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
+
+#: hook.php:131
+msgid "New"
+msgstr "Новый"
+
+#: hook.php:132
+msgid "Active"
+msgstr "Активный"
+
+#: hook.php:133
+msgid "Not found"
+msgstr "Не найден"
+
+#: inc/computer.class.php:57 inc/ldapcomputersmenu.class.php:46
+#: inc/profile.class.php:108
+msgid "View LDAP computer"
+msgid_plural "View LDAP computers"
+msgstr[0] "Просмотр ПК из LDAP"
+msgstr[1] "Просмотр ПК из LDAP"
+msgstr[2] "Просмотр ПК из LDAP"
+msgstr[3] "Просмотр ПК из LDAP"
+
+#: inc/computer.class.php:76
+msgid "LDAP info"
+msgstr "Данные из LDAP"
+
+#: inc/computer.class.php:111
+msgid "List of LDAP computers"
+msgstr "Список ПК из LDAP"
+
+#: inc/computer.class.php:114 inc/computer.class.php:115
+#: inc/computer.class.php:179 inc/computer.class.php:260
+msgid "Last logon"
+msgstr "Последний вход"
+
+#: inc/computer.class.php:116 inc/computer.class.php:181
+#: inc/computer.class.php:268
+msgid "Logon count"
+msgstr "Кол-во входов"
+
+#: inc/computer.class.php:117 inc/computer.class.php:340 inc/state.class.php:56
+msgid "LDAP computer status"
+msgstr "Статус ПК в LDAP"
+
+#: inc/computer.class.php:118 inc/computer.class.php:185
+#: inc/computer.class.php:276
+msgid "Distinguished name"
+msgstr "Уникальное имя"
+
+#: inc/computer.class.php:119 inc/computer.class.php:194
+#: inc/computer.class.php:292
+msgid "OS"
+msgstr "ОС"
+
+#: inc/computer.class.php:120 inc/computer.class.php:197
+#: inc/computer.class.php:316
+msgid "OS version"
+msgstr "ОС - версия"
+
+#: inc/computer.class.php:190 inc/computer.class.php:284
+msgid "Object GUID"
+msgstr "GUID ПК"
+
+#: inc/computer.class.php:202 inc/computer.class.php:308
+msgid "OS servicepack"
+msgstr "ОС - пакет обновления"
+
+#: inc/computer.class.php:205 inc/computer.class.php:300
+msgid "OS hotfix"
+msgstr "ОС - исправление"
+
+#: inc/computer.class.php:210 inc/computer.class.php:324
+msgid "When changed"
+msgstr "Изменен"
+
+#: inc/computer.class.php:213 inc/computer.class.php:332
+msgid "When created"
+msgstr "Создан"
+
+#: inc/computer.class.php:218
+msgid "Computer status in LDAP"
+msgstr "Статус ПК в LDAP"
+
+#: inc/computer.class.php:225
+msgid "GLPI presence"
+msgstr "Есть в GLPI"
+
+#: inc/computer.class.php:389 inc/ldapcomputersmenu.class.php:65
+msgid "Get computers"
+msgstr "Получить ПК"
+
+#: inc/computer.class.php:478 inc/computer.class.php:481
+msgid "No computers to be imported"
+msgstr "Нет ПК для импорта"
+
+#: inc/computer.class.php:850
+msgid "Delete outdated computers"
+msgstr "Удалить неактивные ПК"
+
+#: inc/computer.class.php:854
+msgid "Get computers from LDAP"
+msgstr "Получить список ПК из LDAP"
+
+#: inc/config.class.php:317
+msgid "How long to keep outdated computers"
+msgstr "Срок хранения неактивных ПК"
+
+#: inc/config.class.php:499
+msgid "Delete after days"
+msgstr "Удалить через (дни)"
+
+#: inc/configmenu.class.php:47 inc/profile.class.php:105
+msgid "LDAP computers config"
+msgstr "Настройка ПК из LDAP"
+
+#: inc/profile.class.php:48 inc/profile.class.php:81
+msgid "LDAP computers"
+msgstr "ПК из LDAP"
+
+#: setup.php:146
+msgid "Installed / not configured"
+msgstr "Установлен / не настроен"
