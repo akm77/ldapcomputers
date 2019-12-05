@@ -128,7 +128,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
          }
          // Auth bind
          set_error_handler(function($errno, $errstr, $errfile, $errline) {
-            if($errno === E_WARNING){
+            if ($errno === E_WARNING) {
                 // make it more serious than a warning so it can be caught
                 trigger_error($errstr, E_ERROR);
                 return true;
@@ -141,24 +141,20 @@ class PluginLdapcomputersLdap extends CommonDBTM {
          if ($login != '') {
             try {
                $b = @ldap_bind($ds, $login, $password);
-            }
-            catch (\Exception  $e) {
-               Toolbox::logError($e->getMessage());
-               return false;
-            }
-            finally {
-               restore_error_handler();
+            } catch (\Exception  $e) {
+                 Toolbox::logError($e->getMessage());
+                 return false;
+            } finally {
+                 restore_error_handler();
             }
          } else { // Anonymous bind
             try {
                $b = @ldap_bind($ds);
-            }
-            catch (\Exception  $e) {
-               Toolbox::logError($e->getMessage());
-               return false;
-            }
-            finally {
-               restore_error_handler();
+            } catch (\Exception  $e) {
+                 Toolbox::logError($e->getMessage());
+                 return false;
+            } finally {
+                 restore_error_handler();
             }
          }
          if ($b) {
