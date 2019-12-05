@@ -43,7 +43,7 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
    static $rightname = 'plugin_ldapcomputers_view';
 
    static function getMenuName() {
-      return __("View LDAP computers", "ldapcomputers");
+      return _n('View LDAP computer', 'View LDAP computers', 1, 'ldapcomputers');
    }
 
    static function getMenuContent() {
