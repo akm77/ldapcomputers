@@ -86,7 +86,7 @@ function plugin_init_ldapcomputers() {
  */
 function plugin_version_ldapcomputers() {
    return [
-      'name'           => 'LDAP computers',
+      'name'           => __('LDAP computers', 'ldapcomputers'),
       'version'        => PLUGIN_LDAPCOMPUTERS_VERSION,
       'author'         => '<a href="https://github.com/akm77/ldapcomputers">Aleksey Kotryakhov</a>',
       'license'        => 'AGPLv3+',
