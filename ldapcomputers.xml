@@ -12,8 +12,8 @@
       </short>
       <long>
          <!-- Add as many lang tag you want -->
-         <en>This plugin is designed to get a list of computers from LDAP for further reconciliation with a list of computers in GLPI.</en>
-         <ru>Этот плагин предназначен для получения списка компьютеров из LDAP для дальнейшей сверки со списком компьютеров в GLPI.</ru>
+         <en>This plugin is designed to get a list of computers from AD (LDAP) for further reconciliation with a list of computers in GLPI.</en>
+         <ru>Этот плагин предназначен для получения списка компьютеров из AD (LDAP) для дальнейшей сверки со списком компьютеров в GLPI.</ru>
       </long>
    </description>
    <homepage>https://github.com/pluginsGLPI/ldapcomputers</homepage>
