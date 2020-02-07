@@ -73,7 +73,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
       switch ($item::getType()) {
          case Computer::getType():
-            return __('LDAP info', 'ldapcomputers');
+            return self::createTabEntry(__('LDAP info', 'ldapcomputers'), PluginLdapcomputersComputer::countForItem($item));
             break;
       }
       return '';
@@ -89,6 +89,19 @@ class PluginLdapcomputersComputer extends CommonDBTM {
             break;
       }
       return true;
+   }
+   
+   static function countForItem(Computer $item) {
+      global $DB;
+
+      $iterator = $DB->request([
+         'FROM'   => 'glpi_plugin_ldapcomputers_computers',
+         'WHERE'  => [
+         'name'   => $item->getField('name')
+         ],
+         'ORDER'  => ['name']
+         ]);
+      return count($iterator);   
    }
 
    private static function displayTabContentForComputer(Computer $item) {
