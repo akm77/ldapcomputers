@@ -3,7 +3,7 @@
    <key>ldapcomputers</key>
    <!-- stable, beta, development, alpha, ... -->
    <state>stable</state>
-   <logo>https://raw.githubusercontent.com/pluginsGLPI/ldapcomputers/master/{LNAME}.png</logo>
+   <logo>https://raw.githubusercontent.com/akm77/ldapcomputers/master/LdapComputersLogo.png</logo>
    <description>
       <short>
          <!-- Add as many lang tag you want -->
@@ -16,10 +16,10 @@
          <ru>Этот плагин предназначен для получения списка компьютеров из AD (LDAP) для дальнейшей сверки со списком компьютеров в GLPI.</ru>
       </long>
    </description>
-   <homepage>https://github.com/pluginsGLPI/ldapcomputers</homepage>
-   <download>https://github.com/pluginsGLPI/ldapcomputers/releases</download>
-   <issues>https://github.com/pluginsGLPI/ldapcomputers/issues</issues>
-   <readme>https://github.com/pluginsGLPI/ldapcomputers/blob/master/README.md</readme>
+   <homepage>https://github.com/akm77/ldapcomputers</homepage>
+   <download>https://github.com/akm77/ldapcomputers/releases</download>
+   <issues>https://github.com/akm77/ldapcomputers/issues</issues>
+   <readme>https://github.com/akm77/ldapcomputers/blob/master/README.md</readme>
    <authors>
       <!-- Add as many author tag you want -->
       <author>Aleksey Kotryakhov</author>
