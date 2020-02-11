@@ -25,7 +25,7 @@ git clone https://github.com/akm77/ldapcomputers.git ldapcomputers
 
 ## Документация
 
-Документация к плагину [здесь](https://github.com/pluginsGLPI/glpi-example-plugin/wiki)
+Документация к плагину [здесь](https://github.com/akm77/ldapcomputers/wiki)
 
 ## Установка
 
