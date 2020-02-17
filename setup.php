@@ -39,7 +39,7 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.3');
+define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.4');
 // Minimal GLPI version, inclusive
 define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
 // Maximum GLPI version, exclusive
