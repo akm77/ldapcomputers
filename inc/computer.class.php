@@ -646,7 +646,13 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       if ($ds) {
          $attrs = ["name", "lastLogon", "logonCount", "distinguishedName", "objectGUID", "operatingSystem", "operatingSystemHotfix",
                    "operatingSystemServicePack", "operatingSystemVersion", "whenChanged", "whenCreated"];
-         $filter = $ldap_server->fields['condition'];
+         /*** Need for debug purpous
+         if (isset($_SESSION['glpi_use_mode'])
+            && Session::DEBUG_MODE == $_SESSION['glpi_use_mode']) {
+               $attrs = [];
+         }
+         ***/
+            $filter = $ldap_server->fields['condition'];
          $result = self::searchForComputers($ds, $values, $filter, $attrs, $limitexceeded,
                                             $computer_infos, $ldap_server);
          if (!$result) {
@@ -680,20 +686,54 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       $count    = 0;  //Store the number of results ldap_search
 
       do {
-         if (PluginLdapcomputersLdap::isLdapPageSizeAvailable($config_ldap)) {
-            ldap_control_paged_result($ds, $config_ldap->fields['pagesize'], true, $cookie);
-         }
          $filter = Toolbox::unclean_cross_side_scripting_deep(Toolbox::stripslashes_deep($filter));
-         $sr     = @ldap_search($ds, $values['basedn'], $filter, $attrs);
+
+         if (PluginLdapcomputersLdap::isLdapPageSizeAvailable($config_ldap)) {
+            if (version_compare(PHP_VERSION, '7.3') < 0) {
+               //prior to PHP 7.3, use ldap_control_paged_result
+               ldap_control_paged_result($ds, $config_ldap->fields['pagesize'], true, $cookie);
+               $sr = @ldap_search($ds, $values['basedn'], $filter, $attrs);
+            } else {
+               //since PHP 7.3, send serverctrls to ldap_search
+               $controls = [
+                  [
+                     'oid'        =>LDAP_CONTROL_PAGEDRESULTS,
+                     'iscritical' => true,
+                     'value'      => [
+                        'size'    => $config_ldap->fields['pagesize'],
+                        'cookie'  => $cookie
+                     ]
+                  ]
+               ];
+               $sr = @ldap_search($ds, $values['basedn'], $filter, $attrs, 0, -1, -1, LDAP_DEREF_NEVER, $controls);
+               ldap_parse_result($ds, $sr, $errcode, $matcheddn, $errmsg, $referrals, $controls);
+               if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
+                  $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+               } else {
+                  $cookie = '';
+               }
+            }
+         } else {
+            $sr = @ldap_search($ds, $values['basedn'], $filter, $attrs);
+         }
+
          if ($sr) {
             if (in_array(ldap_errno($ds), [4,11])) {
                // openldap return 4 for Size limit exceeded
                $limitexceeded = true;
             }
+
             $info = PluginLdapcomputersLdap::get_entries_clean($ds, $sr);
             if (in_array(ldap_errno($ds), [4,11])) {
                $limitexceeded = true;
             }
+
+            /*** Need for debug purpous
+            if (isset($_SESSION['glpi_use_mode'])
+                && Session::DEBUG_MODE == $_SESSION['glpi_use_mode']) {
+                  Toolbox::logInFile('ldapcomputers', print_r($info, true));
+            }
+            ***/
 
             $count += $info['count'];
             //If page results are enabled and the number of results is greater than the maximum allowed
@@ -765,7 +805,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          } else {
             return false;
          }
-         if (PluginLdapcomputersLdap::isLdapPageSizeAvailable($config_ldap)) {
+         if (PluginLdapcomputersLdap::isLdapPageSizeAvailable($config_ldap) && version_compare(PHP_VERSION, '7.3') < 0) {
             ldap_control_paged_result_response($ds, $sr, $cookie);
          }
 
