@@ -90,7 +90,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       }
       return true;
    }
-   
+
    static function countForItem(Computer $item) {
       global $DB;
 
@@ -101,7 +101,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          ],
          'ORDER'  => ['name']
          ]);
-      return count($iterator);   
+      return count($iterator);
    }
 
    private static function displayTabContentForComputer(Computer $item) {
@@ -652,7 +652,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
                $attrs = [];
          }
          ***/
-            $filter = $ldap_server->fields['condition'];
+         $filter = $ldap_server->fields['condition'];
          $result = self::searchForComputers($ds, $values, $filter, $attrs, $limitexceeded,
                                             $computer_infos, $ldap_server);
          if (!$result) {
