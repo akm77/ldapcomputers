@@ -1,15 +1,15 @@
-# English translations for PACKAGE package.
-# Copyright (C) 2019 THE PACKAGE'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Automatically generated, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:43+1000\n"
-"PO-Revision-Date: 2020-03-26 22:41+0000\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2020-06-26 15:42+0200\n"
+"PO-Revision-Date: 2020-03-26 22:56+0000\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -43,17 +43,17 @@ msgstr "Informações LDAP"
 
 #: inc/computer.class.php:111
 msgid "List of LDAP computers"
-msgstr "Lista dos computadores LDAP"
+msgstr "Lisat dos computadores LDAP"
 
 #: inc/computer.class.php:114 inc/computer.class.php:115
 #: inc/computer.class.php:179 inc/computer.class.php:260
 msgid "Last logon"
-msgstr "Último logon"
+msgstr "Último Logon"
 
 #: inc/computer.class.php:116 inc/computer.class.php:181
 #: inc/computer.class.php:268
 msgid "Logon count"
-msgstr "Contagem de Logon"
+msgstr "Contagem Logon"
 
 #: inc/computer.class.php:117 inc/computer.class.php:340 inc/state.class.php:56
 msgid "LDAP computer status"
@@ -67,24 +67,24 @@ msgstr "Nome distinto"
 #: inc/computer.class.php:119 inc/computer.class.php:194
 #: inc/computer.class.php:292
 msgid "OS"
-msgstr "SO"
+msgstr "OS"
 
 #: inc/computer.class.php:120 inc/computer.class.php:197
 #: inc/computer.class.php:316
 msgid "OS version"
-msgstr "Versão SO"
+msgstr "OS version"
 
 #: inc/computer.class.php:190 inc/computer.class.php:284
 msgid "Object GUID"
-msgstr "Objecto GUID"
+msgstr "Object GUID"
 
 #: inc/computer.class.php:202 inc/computer.class.php:308
 msgid "OS servicepack"
-msgstr "Servicepack SO"
+msgstr "OS servicepack"
 
 #: inc/computer.class.php:205 inc/computer.class.php:300
 msgid "OS hotfix"
-msgstr "Hotfix SO"
+msgstr "OS hotfix"
 
 #: inc/computer.class.php:210 inc/computer.class.php:324
 msgid "When changed"
@@ -100,11 +100,11 @@ msgstr "Computer status in LDAP"
 
 #: inc/computer.class.php:225
 msgid "GLPI presence"
-msgstr "GLPI presence"
+msgstr "Presento no GLPI"
 
 #: inc/computer.class.php:389 inc/ldapcomputersmenu.class.php:65
 msgid "Get computers"
-msgstr "Get computers"
+msgstr "Obter computadorers"
 
 #: inc/computer.class.php:478 inc/computer.class.php:481
 msgid "No computers to be imported"
