@@ -8,11 +8,13 @@
       <short>
          <!-- Add as many lang tag you want -->
          <en>LDAP computers - GLPI plugin</en>
+         <pt>Computadores LDAP - GLPI plugin</pt>
          <ru>LDAP computers - плагин для GLPI</ru>
       </short>
       <long>
          <!-- Add as many lang tag you want -->
          <en>This plugin is designed to get a list of computers from AD (LDAP) for further reconciliation with a list of computers in GLPI.</en>
+         <pt>Este plugin é desenhado para receber os computadores da AD (LDAP) para reconciliação com a lista de computadores no GLPI.</pt>
          <ru>Этот плагин предназначен для получения списка компьютеров из AD (LDAP) для дальнейшей сверки со списком компьютеров в GLPI.</ru>
       </long>
    </description>
@@ -37,6 +39,7 @@
    <langs>
       <!-- Add as many lang tag you want -->
       <lang>en_GB</lang>
+      <lang>pt_PT</lang>
       <lang>ru_RU</lang>
    </langs>
    <license>GPL V3+</license>
@@ -45,6 +48,10 @@
          <tag>LDAP</tag>
          <tag>AD</tag>
       </en>
+      <pt>
+         <tag>LDAP</tag>
+         <tag>AD</tag>
+      </pt>
    </tags>
    <screenshots>
       <screenshot>https://raw.githubusercontent.com/akm77/ldapcomputers/master/screenshots/screenshot-1.png</screenshot>

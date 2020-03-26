@@ -1,0 +1,140 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2019 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-12-04 15:43+1000\n"
+"PO-Revision-Date: 2019-12-04 15:43+1000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: hook.php:131
+msgid "New"
+msgstr "Novo"
+
+#: hook.php:132
+msgid "Active"
+msgstr "Activo"
+
+#: hook.php:133
+msgid "Not found"
+msgstr "Não encontrado."
+
+#: inc/computer.class.php:57 inc/ldapcomputersmenu.class.php:46
+#: inc/profile.class.php:108
+msgid "View LDAP computers"
+msgid_plural "View LDAP computers"
+msgstr[0] "Ver computador LDAP"
+msgstr[1] "Ver computadores LDAP"
+msgstr[2] "Ver computadores LDAP"
+msgstr[3] "Ver computadores LDAP"
+
+#: inc/computer.class.php:76
+msgid "LDAP info"
+msgstr "Informações LDAP"
+
+#: inc/computer.class.php:111
+msgid "List of LDAP computers"
+msgstr "Lista dos computadores LDAP"
+
+#: inc/computer.class.php:114 inc/computer.class.php:115
+#: inc/computer.class.php:179 inc/computer.class.php:260
+msgid "Last logon"
+msgstr "Último Logon"
+
+#: inc/computer.class.php:116 inc/computer.class.php:181
+#: inc/computer.class.php:268
+msgid "Logon count"
+msgstr "Contagem de Logon"
+
+#: inc/computer.class.php:117 inc/computer.class.php:340 inc/state.class.php:56
+msgid "LDAP computer status"
+msgstr "Estado do computador LDAP"
+
+#: inc/computer.class.php:118 inc/computer.class.php:185
+#: inc/computer.class.php:276
+msgid "Distinguished name"
+msgstr "Nome destintivo"
+
+#: inc/computer.class.php:119 inc/computer.class.php:194
+#: inc/computer.class.php:292
+msgid "OS"
+msgstr "OS"
+
+#: inc/computer.class.php:120 inc/computer.class.php:197
+#: inc/computer.class.php:316
+msgid "OS version"
+msgstr "OS version"
+
+#: inc/computer.class.php:190 inc/computer.class.php:284
+msgid "Object GUID"
+msgstr "Object GUID"
+
+#: inc/computer.class.php:202 inc/computer.class.php:308
+msgid "OS servicepack"
+msgstr "OS servicepack"
+
+#: inc/computer.class.php:205 inc/computer.class.php:300
+msgid "OS hotfix"
+msgstr "OS hotfix"
+
+#: inc/computer.class.php:210 inc/computer.class.php:324
+msgid "When changed"
+msgstr "When changed"
+
+#: inc/computer.class.php:213 inc/computer.class.php:332
+msgid "When created"
+msgstr "When created"
+
+#: inc/computer.class.php:218
+msgid "Computer status in LDAP"
+msgstr "Computer status in LDAP"
+
+#: inc/computer.class.php:225
+msgid "GLPI presence"
+msgstr "GLPI presence"
+
+#: inc/computer.class.php:389 inc/ldapcomputersmenu.class.php:65
+msgid "Get computers"
+msgstr "Get computers"
+
+#: inc/computer.class.php:478 inc/computer.class.php:481
+msgid "No computers to be imported"
+msgstr "No computers to be imported"
+
+#: inc/computer.class.php:850
+msgid "Delete outdated computers"
+msgstr "Delete outdated computers"
+
+#: inc/computer.class.php:854
+msgid "Get computers from LDAP"
+msgstr "Get computers from LDAP"
+
+#: inc/config.class.php:317
+msgid "How long to keep outdated computers"
+msgstr "How long to keep outdated computers"
+
+#: inc/config.class.php:499
+msgid "Delete after days"
+msgstr "Delete after days"
+
+#: inc/configmenu.class.php:47 inc/profile.class.php:105
+msgid "LDAP computers config"
+msgstr "LDAP computers config"
+
+#: inc/profile.class.php:48 inc/profile.class.php:81
+msgid "LDAP computers"
+msgstr "LDAP computers"
+
+#: setup.php:146
+msgid "Installed / not configured"
+msgstr "Installed / not configured"
