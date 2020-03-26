@@ -5,17 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-04 15:43+1000\n"
-"PO-Revision-Date: 2019-12-04 15:43+1000\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2020-03-26 22:41+0000\n"
 "Language-Team: none\n"
-"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2\n"
+"Last-Translator: Pedro Rocha <jpnr79@gmail.com>\n"
+"Language: pt_PT\n"
 
 #: hook.php:131
 msgid "New"
@@ -27,16 +28,14 @@ msgstr "Activo"
 
 #: hook.php:133
 msgid "Not found"
-msgstr "Não encontrado."
+msgstr "Não encontrado"
 
 #: inc/computer.class.php:57 inc/ldapcomputersmenu.class.php:46
 #: inc/profile.class.php:108
 msgid "View LDAP computers"
 msgid_plural "View LDAP computers"
-msgstr[0] "Ver computador LDAP"
-msgstr[1] "Ver computadores LDAP"
-msgstr[2] "Ver computadores LDAP"
-msgstr[3] "Ver computadores LDAP"
+msgstr[0] "Exibir computador LDAP"
+msgstr[1] "Exibir computadores LDAP"
 
 #: inc/computer.class.php:76
 msgid "LDAP info"
@@ -49,7 +48,7 @@ msgstr "Lista dos computadores LDAP"
 #: inc/computer.class.php:114 inc/computer.class.php:115
 #: inc/computer.class.php:179 inc/computer.class.php:260
 msgid "Last logon"
-msgstr "Último Logon"
+msgstr "Último logon"
 
 #: inc/computer.class.php:116 inc/computer.class.php:181
 #: inc/computer.class.php:268
@@ -58,34 +57,34 @@ msgstr "Contagem de Logon"
 
 #: inc/computer.class.php:117 inc/computer.class.php:340 inc/state.class.php:56
 msgid "LDAP computer status"
-msgstr "Estado do computador LDAP"
+msgstr "Status do computador LDAP"
 
 #: inc/computer.class.php:118 inc/computer.class.php:185
 #: inc/computer.class.php:276
 msgid "Distinguished name"
-msgstr "Nome destintivo"
+msgstr "Nome distinto"
 
 #: inc/computer.class.php:119 inc/computer.class.php:194
 #: inc/computer.class.php:292
 msgid "OS"
-msgstr "OS"
+msgstr "SO"
 
 #: inc/computer.class.php:120 inc/computer.class.php:197
 #: inc/computer.class.php:316
 msgid "OS version"
-msgstr "OS version"
+msgstr "Versão SO"
 
 #: inc/computer.class.php:190 inc/computer.class.php:284
 msgid "Object GUID"
-msgstr "Object GUID"
+msgstr "Objecto GUID"
 
 #: inc/computer.class.php:202 inc/computer.class.php:308
 msgid "OS servicepack"
-msgstr "OS servicepack"
+msgstr "Servicepack SO"
 
 #: inc/computer.class.php:205 inc/computer.class.php:300
 msgid "OS hotfix"
-msgstr "OS hotfix"
+msgstr "Hotfix SO"
 
 #: inc/computer.class.php:210 inc/computer.class.php:324
 msgid "When changed"
