@@ -184,13 +184,18 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       echo "<td><label for='logonCount'>" . __('Logon count', 'ldapcomputers') . "</label></td>";
       echo "<td><input type='text' readonly id='name' name='logonCount' value='". $this->fields["logonCount"] ."'></td></tr>";
 
+      echo "<tr class='tab_bg_1'><td><label for='lastLogonTimestamp'>" . __('Last logon time stamp', 'ldapcomputers') . "</label></td>";
+      echo "<td><input type='text' readonly id='name' name='lastLogonTimestamp' value='". $this->fields["lastLogonTimestamp"] ."'></td></tr>";
+
       echo "<tr class='tab_bg_1'>";
       echo "<td><label for='distinguishedName'>" . __('Distinguished name', 'ldapcomputers') . "</label></td>";
       echo "<td class=middle colspan='3'>";
       echo "<textarea cols='60' rows='3' readonly name='distinguishedName' id='distinguishedName'>".$this->fields["distinguishedName"]."</textarea>";
       echo "</td></tr>";
 
-      echo "<tr class='tab_bg_1'><td><label for='objectGUID'>" . __('Object GUID', 'ldapcomputers') . "</label></td>";
+      echo "<tr class='tab_bg_1'><td><label for='dNSHostName'>" . __('FQDN') . "</label></td>";
+      echo "<td><input type='text'  id='dNSHostName' name='dNSHostName' value='". $this->fields["dNSHostName"] ."'></td>";
+      echo "<td><label for='objectGUID'>" . __('Object GUID', 'ldapcomputers') . "</label></td>";
       echo "<td><input type='text'  id='objectGUID' name='objectGUID' value='". $this->fields["objectGUID"] ."'></td></tr>";
 
       echo "<tr class='tab_bg_1'>";
@@ -249,7 +254,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '2',
+         'id'                 => '3',
          'table'              => $this->getTable(),
          'field'              => 'id',
          'name'               => __('ID'),
@@ -257,7 +262,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '3',
+         'id'                 => '5',
          'table'              => $this->getTable(),
          'field'              => 'lastLogon',
          'name'               => __('Last logon', 'ldapcomputers'),
@@ -265,7 +270,15 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => true
       ];
       $tab[] = [
-         'id'                 => '4',
+         'id'                 => '7',
+         'table'              => $this->getTable(),
+         'field'              => 'lastLogonTimestamp',
+         'name'               => __('Last logon time stamp', 'ldapcomputers'),
+         'datatype'           => 'datetime',
+         'massiveaction'      => true
+      ];
+      $tab[] = [
+         'id'                 => '9',
          'table'              => $this->getTable(),
          'field'              => 'logonCount',
          'name'               => __('Logon count', 'ldapcomputers'),
@@ -273,7 +286,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '5',
+         'id'                 => '11',
          'table'              => $this->getTable(),
          'field'              => 'distinguishedName',
          'name'               => __('Distinguished name', 'ldapcomputers'),
@@ -281,7 +294,15 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '6',
+         'id'                 => '13',
+         'table'              => $this->getTable(),
+         'field'              => 'dNSHostName',
+         'name'               => __('FQDN'),
+         'datatype'           => 'text',
+         'massiveaction'      => false
+      ];
+      $tab[] = [
+         'id'                 => '15',
          'table'              => $this->getTable(),
          'field'              => 'objectGUID',
          'name'               => __('Object GUID', 'ldapcomputers'),
@@ -289,7 +310,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '7',
+         'id'                 => '17',
          'table'              => $this->getTable(),
          'field'              => 'operatingSystem',
          'name'               => __('OS', 'ldapcomputers'),
@@ -297,7 +318,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '8',
+         'id'                 => '19',
          'table'              => $this->getTable(),
          'field'              => 'operatingSystemHotfix',
          'name'               => __('OS hotfix', 'ldapcomputers'),
@@ -305,7 +326,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '9',
+         'id'                 => '21',
          'table'              => $this->getTable(),
          'field'              => 'operatingSystemServicePack',
          'name'               => __('OS servicepack', 'ldapcomputers'),
@@ -313,7 +334,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '10',
+         'id'                 => '23',
          'table'              => $this->getTable(),
          'field'              => 'operatingSystemVersion',
          'name'               => __('OS version', 'ldapcomputers'),
@@ -321,7 +342,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '11',
+         'id'                 => '25',
          'table'              => $this->getTable(),
          'field'              => 'whenChanged',
          'name'               => __('When changed', 'ldapcomputers'),
@@ -329,7 +350,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '12',
+         'id'                 => '27',
          'table'              => $this->getTable(),
          'field'              => 'whenCreated',
          'name'               => __('When created', 'ldapcomputers'),
@@ -337,7 +358,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '13',
+         'id'                 => '29',
          'table'              => 'glpi_plugin_ldapcomputers_states',
          'field'              => 'name',
          'name'               => __('LDAP computer status', 'ldapcomputers'),
@@ -346,7 +367,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'injectable'         => true
       ];
       $tab[] = [
-         'id'                 => '14',
+         'id'                 => '31',
          'table'              => $this->getTable(),
          'field'              => 'is_in_glpi_computers',
          'name'               => __('GLPI presence', 'ldapcomputers'),
@@ -354,7 +375,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => true
       ];
       $tab[] = [
-         'id'                 => '20',
+         'id'                 => '33',
          'table'              => $this->getTable(),
          'field'              => 'date_mod',
          'name'               => __('Last update'),
@@ -362,7 +383,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '21',
+         'id'                 => '35',
          'table'              => $this->getTable(),
          'field'              => 'date_creation',
          'name'               => __('Creation date'),
@@ -520,8 +541,10 @@ class PluginLdapcomputersComputer extends CommonDBTM {
                         `glpi_plugin_ldapcomputers_computers`.`id`            ,
                         `glpi_plugin_ldapcomputers_computers`.`name`          ,
                         `lastLogon`                                           ,
+                        `lastLogonTimestamp`                                           ,
                         `logonCount`                                          ,
                         `distinguishedName`                                   ,
+                        `dNSHostName`                                         ,
                         `objectGUID`                                          ,
                         `operatingSystem`                                     ,
                         `operatingSystemHotfix`                               ,
@@ -570,15 +593,18 @@ class PluginLdapcomputersComputer extends CommonDBTM {
     */
    static function getAndSync($computer) {
       $temp_computer = new PluginLdapcomputersComputer();
-      $computer['lastLogon']   = date('Y-m-d H:i:s', $computer['lastLogon']);
-      $computer['whenChanged'] = date('Y-m-d H:i:s', $computer['whenChanged']);
-      $computer['whenCreated'] = date('Y-m-d H:i:s', $computer['whenCreated']);
+      $computer['lastLogon']          = date('Y-m-d H:i:s', $computer['lastLogon']);
+      $computer['lastLogonTimestamp'] = date('Y-m-d H:i:s', $computer['lastLogonTimestamp']);
+      $computer['whenChanged']        = date('Y-m-d H:i:s', $computer['whenChanged']);
+      $computer['whenCreated']        = date('Y-m-d H:i:s', $computer['whenCreated']);
       if ($temp_computer->getFromDBByCrit(['objectGUID' => $computer['objectGUID']])) {
          // Check for any changes
          if ($temp_computer->getField('name')                      != $computer['name'] ||
             $temp_computer->getField('lastLogon')                  != $computer['lastLogon'] ||
+            $temp_computer->getField('lastLogonTimestamp')         != $computer['lastLogonTimestamp'] ||
             $temp_computer->getField('logonCount')                 != $computer['logonCount'] ||
             $temp_computer->getField('distinguishedName')          != $computer['distinguishedName'] ||
+            $temp_computer->getField('dNSHostName')                != $computer['dNSHostName'] ||
             $temp_computer->getField('operatingSystem')            != $computer['operatingSystem'] ||
             $temp_computer->getField('operatingSystemHotfix')      != $computer['operatingSystemHotfix'] ||
             $temp_computer->getField('operatingSystemServicePack') != $computer['operatingSystemServicePack'] ||
@@ -644,8 +670,9 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       }
 
       if ($ds) {
-         $attrs = ["name", "lastLogon", "logonCount", "distinguishedName", "objectGUID", "operatingSystem", "operatingSystemHotfix",
-                   "operatingSystemServicePack", "operatingSystemVersion", "whenChanged", "whenCreated"];
+         $attrs = ["name", "lastLogon", "lastLogonTimestamp","logonCount", "distinguishedName", "dNSHostName","objectGUID",
+                   "operatingSystem", "operatingSystemHotfix", "operatingSystemServicePack", "operatingSystemVersion",
+                   "whenChanged", "whenCreated"];
          /*** Need for debug purpous
          if (isset($_SESSION['glpi_use_mode'])
             && Session::DEBUG_MODE == $_SESSION['glpi_use_mode']) {
@@ -758,6 +785,19 @@ class PluginLdapcomputersComputer extends CommonDBTM {
                   );
                } else {
                   $computer_infos[$objectGUID]["lastLogon"] = null;
+               }
+               if (isset($info[$ligne]['lastlogontimestamp'][0])) {
+                  $computer_infos[$objectGUID]["lastLogonTimestamp"]  = PluginLdapcomputersLdap::ldapFiletime2Timestamp(
+                     $info[$ligne]['lastlogontimestamp'][0],
+                     $config_ldap->fields['time_offset']
+                  );
+               } else {
+                  $computer_infos[$objectGUID]["lastLogonTimestamp"] = null;
+               }
+               if (isset($info[$ligne]['dnshostname'][0])) {
+                  $computer_infos[$objectGUID]["dNSHostName"] = $info[$ligne]['dnshostname'][0];
+               } else {
+                  $computer_infos[$objectGUID]["dNSHostName"] = null;
                }
                if (isset($info[$ligne]['logoncount'][0])) {
                   $computer_infos[$objectGUID]["logonCount"] = $info[$ligne]['logoncount'][0];
