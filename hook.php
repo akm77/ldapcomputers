@@ -88,8 +88,10 @@ function plugin_ldapcomputers_install() {
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `name` varchar(255) NOT NULL,
                   `lastLogon` datetime DEFAULT NULL,
+                  `lastLogonTimestamp` datetime DEFAULT NULL,
                   `logonCount` int(11) DEFAULT NULL,
                   `distinguishedName` text NOT NULL,
+                  `dNSHostName` varchar(255) DEFAULT NULL,
                   `objectGUID` varchar(255) DEFAULT NULL,
                   `operatingSystem` varchar(255) DEFAULT NULL,
                   `operatingSystemHotfix` varchar(255) DEFAULT NULL,
@@ -104,27 +106,37 @@ function plugin_ldapcomputers_install() {
                   PRIMARY KEY (`id`),
                   KEY `date_mod` (`date_mod`),
                   KEY `name` (`name`),
-                  KEY `objectGUID` (`objectGUID`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
-      $DB->queryOrDie($query, $DB->error());
-   }
-
-   //Create computers table only if it does not exists yet!
-   if (!$DB->tableExists('glpi_plugin_ldapcomputers_states')) {
-      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_states` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `name` varchar(255) NOT NULL,
-                  `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
-                  `date_creation` datetime NOT NULL,
-                  `date_mod` datetime NOT NULL,
-                  PRIMARY KEY (`id`),
-                  KEY `name` (`name`)
+                  KEY `objectGUID` (`objectGUID`),
+                  KEY `dNSHostName`, (`dNSHostName`),
+                  KEY `plugin_ldapcomputers_states_id`, (`plugin_ldapcomputers_states_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
 
    /* Placeholder for further update process in future
    */
+
+   if ($DB->tableExists('glpi_plugin_ldapcomputers_computers')
+   && !$DB->fieldExists('glpi_plugin_ldapcomputers_computers', 'dNSHostName')) {
+      $migration->addField('glpi_plugin_ldapcomputers_computers',
+                          'dNSHostName',
+                          'string',
+                          ['after' => 'distinguishedName']);
+      $migration->addKey('glpi_plugin_ldapcomputers_computers',
+                        'dNSHostName',
+                        'dNSHostName');
+      $migration->addKey('glpi_plugin_ldapcomputers_computers',
+                        'plugin_ldapcomputers_states_id',
+                        'plugin_ldapcomputers_states_id');
+   }
+
+   if ($DB->tableExists('glpi_plugin_ldapcomputers_computers')
+   && !$DB->fieldExists('glpi_plugin_ldapcomputers_computers', 'lastLogonTimestamp')) {
+      $migration->addField('glpi_plugin_ldapcomputers_computers',
+                          'lastLogonTimestamp',
+                          'datetime',
+                          ['after' => 'lastLogon']);
+   }
 
    $state = new PluginLdapcomputersState();
    $table = $state->getTable();
