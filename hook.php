@@ -100,6 +100,7 @@ function plugin_ldapcomputers_install() {
                   `whenChanged` datetime DEFAULT NULL,
                   `whenCreated` datetime DEFAULT NULL,
                   `plugin_ldapcomputers_states_id` int(11) NOT NULL DEFAULT 0,
+                  `plugin_ldapcomputers_configs_id` int(11) NOT NULL DEFAULT 0,
                   `is_in_glpi_computers` tinyint(4) NOT NULL DEFAULT 0,
                   `date_creation` datetime NOT NULL,
                   `date_mod` datetime NOT NULL,
@@ -108,7 +109,8 @@ function plugin_ldapcomputers_install() {
                   KEY `name` (`name`),
                   KEY `objectGUID` (`objectGUID`),
                   KEY `dNSHostName`, (`dNSHostName`),
-                  KEY `plugin_ldapcomputers_states_id`, (`plugin_ldapcomputers_states_id`)
+                  KEY `plugin_ldapcomputers_states_id`, (`plugin_ldapcomputers_states_id`),
+                  KEY `plugin_ldapcomputers_configs_id`, (`plugin_ldapcomputers_configs_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
@@ -138,6 +140,17 @@ function plugin_ldapcomputers_install() {
                           ['after' => 'lastLogon']);
    }
 
+   if ($DB->tableExists('glpi_plugin_ldapcomputers_computers')
+   && !$DB->fieldExists('glpi_plugin_ldapcomputers_computers', 'plugin_ldapcomputers_configs_id')) {
+      $migration->addField('glpi_plugin_ldapcomputers_computers',
+                          'plugin_ldapcomputers_configs_id',
+                          'integer',
+                          ['after' => 'plugin_ldapcomputers_states_id']);
+      $migration->addKey('glpi_plugin_ldapcomputers_computers',
+                        'plugin_ldapcomputers_configs_id',
+                        'plugin_ldapcomputers_configs_id');
+   }
+
    $state = new PluginLdapcomputersState();
    $table = $state->getTable();
    foreach ([$state::LDAP_STATUS_NEW      => __("New", "ldapcomputers"),
@@ -154,7 +167,7 @@ function plugin_ldapcomputers_install() {
    //execute the whole migration
    $migration->executeMigration();
 
-   PluginLdapcomputersProfile::initProfile();
+   //PluginLdapcomputersProfile::initProfile();
    PluginLdapcomputersProfile::createFirstAccess($_SESSION['glpiactiveprofile']['id']);
 
    CronTask::Register('PluginLdapcomputersComputer', 'LdapComputersDeleteOutdatedComputers', DAY_TIMESTAMP);
@@ -272,7 +285,7 @@ function plugin_ldapcomputers_uninstall() {
       }
    }
 
-   PluginLdapcomputersProfile::removeRights();
+   PluginLdapcomputersProfile::uninstallProfile();
    CronTask::Unregister('ldapcomputers');
 
    return true;
