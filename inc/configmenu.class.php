@@ -64,14 +64,4 @@ class PluginLdapcomputersConfigmenu extends CommonGLPI {
       }
       return $menu;
    }
-
-   static function removeRightsFromSession() {
-      if (isset($_SESSION['glpimenu']['config']['types']['PluginLdapcomputersConfigmenu'])) {
-         unset($_SESSION['glpimenu']['config']['types']['PluginLdapcomputersConfigmenu']);
-      }
-      if (isset($_SESSION['glpimenu']['config']['content']['pluginldapcomputersconfigmenu'])) {
-         unset($_SESSION['glpimenu']['config']['content']['pluginldapcomputersconfigmenu']);
-      }
-   }
-
 }
