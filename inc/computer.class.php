@@ -58,7 +58,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
    }
 
    static function canCreate() {
-      return static::canUpdate();
+      return false;
    }
 
    static function canPurge() {
@@ -155,6 +155,27 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          echo "</div>";
       }
    }
+   /**
+    * Preconfig datas for standard system
+    *
+    * @param string $type type of standard system : AD
+    *
+    * @return void
+    */
+    function preconfig($type) {
+
+      switch ($type) {
+         case 'AD' :
+            $this->fields['port']                      = "389";
+            $this->fields['condition']
+               = '(&(&(&(samAccountType=805306369)(!(primaryGroupId=516)))
+                  (objectCategory=computer)(!(operatingSystem=Windows Server*))))';
+            break;
+
+         default:
+            $this->post_getEmpty();
+      }
+   }
 
    /**
     * Print the config ldap form
@@ -169,7 +190,37 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       if (!Config::canUpdate()) {
          return false;
       }
+   
+      if (empty($ID)) {
+         $this->getEmpty();
+         if (isset($options['preconfig'])) {
+            $this->preconfig($options['preconfig']);
+         }
+      } else {
+         $this->getFromDB($ID);
+      }
+
+      $ldap_server = new PluginLdapcomputersConfig();
+      $ldap_server->getFromDB($this->fields['plugin_ldapcomputers_configs_id']);
+
+      $options['formtitle'] = sprintf(
+         '%1$s - %2$s',
+         $this->getTypeName(1),
+         $ldap_server->getField('name')
+      );
+
       $this->showFormHeader($options);
+
+      if (empty($ID)) {
+         $target = $this->getFormURL();
+         echo "<tr class='tab_bg_2'><td>".__('Preconfiguration')."</td> ";
+         echo "<td colspan='3'>";
+         echo "<a href='$target?preconfig=AD'>".__('Active Directory')."</a>";
+         echo "&nbsp;&nbsp;/&nbsp;&nbsp;";
+         echo "<a href='$target?preconfig=default'>".__('Default values');
+         echo "</a></td></tr>";
+      }
+
       echo "<tr class='tab_bg_1'><td><label for='name'>" . __('Name') . "</label></td>";
       echo "<td><input type='text'  id='name' name='name' value='". $this->fields["name"] ."'></td>";
       if ($ID > 0) {
@@ -194,9 +245,9 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'><td><label for='dNSHostName'>" . __('FQDN') . "</label></td>";
-      echo "<td><input type='text'  id='dNSHostName' name='dNSHostName' value='". $this->fields["dNSHostName"] ."'></td>";
+      echo "<td><input type='text' readonly id='dNSHostName' name='dNSHostName' value='". $this->fields["dNSHostName"] ."'></td>";
       echo "<td><label for='objectGUID'>" . __('Object GUID', 'ldapcomputers') . "</label></td>";
-      echo "<td><input type='text'  id='objectGUID' name='objectGUID' value='". $this->fields["objectGUID"] ."'></td></tr>";
+      echo "<td><input type='text' readonly id='objectGUID' name='objectGUID' value='". $this->fields["objectGUID"] ."'></td></tr>";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td><label for='operatingSystem'>" . __('OS', 'ldapcomputers') . "</label></td>";
@@ -267,7 +318,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'field'              => 'lastLogon',
          'name'               => __('Last logon', 'ldapcomputers'),
          'datatype'           => 'datetime',
-         'massiveaction'      => true
+         'massiveaction'      => false
       ];
       $tab[] = [
          'id'                 => '7',
@@ -275,7 +326,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'field'              => 'lastLogonTimestamp',
          'name'               => __('Last logon time stamp', 'ldapcomputers'),
          'datatype'           => 'datetime',
-         'massiveaction'      => true
+         'massiveaction'      => false
       ];
       $tab[] = [
          'id'                 => '9',
@@ -368,6 +419,13 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       ];
       $tab[] = [
          'id'                 => '31',
+         'table'              => 'glpi_plugin_ldapcomputers_configs',
+         'field'              => 'name',
+         'name'               => __('LDAP directory'),
+         'datatype'           => 'itemlink'
+      ];
+      $tab[] = [
+         'id'                 => '33',
          'table'              => $this->getTable(),
          'field'              => 'is_in_glpi_computers',
          'name'               => __('GLPI presence', 'ldapcomputers'),
@@ -375,7 +433,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => true
       ];
       $tab[] = [
-         'id'                 => '33',
+         'id'                 => '35',
          'table'              => $this->getTable(),
          'field'              => 'date_mod',
          'name'               => __('Last update'),
@@ -383,7 +441,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          'massiveaction'      => false
       ];
       $tab[] = [
-         'id'                 => '35',
+         'id'                 => '37',
          'table'              => $this->getTable(),
          'field'              => 'date_creation',
          'name'               => __('Creation date'),
@@ -471,7 +529,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       }
 
       if ($ds) {
-         self::importLdapComputers((object)$ldap_server);
+         self::importLdapComputers($ldap_server);
       } else {
          echo "<div class='center b firstbloc'>".__('Unable to connect to the LDAP directory');
       }
@@ -489,7 +547,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          $values[$option] = $value;
       }
 
-      self::deleteOutdatedComputers($ldap_server->getField('retention_date'));
+      self::deleteOutdatedComputers($ldap_server);
 
       $limitexceeded  = false;
 
@@ -497,7 +555,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
 
       if (is_array($ldap_computers)) {
          if (count($ldap_computers) > 0) {
-            self::updateComputerStatus($ldap_computers);
+            self::updateComputerStatus($ldap_server, $ldap_computers);
          } else {
             echo "<div class='center b'>". __('No computers to be imported', 'ldapcomputers')."</div>";
          }
@@ -509,15 +567,18 @@ class PluginLdapcomputersComputer extends CommonDBTM {
     /**
     * Delete computer with status LDAP_STATUS_NOTFOUND older then given days in database
     *
-    * @param int $days delete outdated computers after given days
+    * @param PluginLdapcomputersConfig $ldap_server delete outdated computers after given days
     *
     * @return mysqli_result|boolean Query result handler
     */
-   static function deleteOutdatedComputers($days = 10) {
+
+      static function deleteOutdatedComputers(PluginLdapcomputersConfig $ldap_server) {
       global $DB;
-      // Delete records older than 10 days
+      // Delete outdated records
+      $days = $ldap_server->getField('retention_date');
       return $DB->delete(PluginLdapcomputersComputer::getTable(),
-                 ['plugin_ldapcomputers_states_id' => PluginLdapcomputersState::LDAP_STATUS_NOTFOUND,
+                 ['plugin_ldapcomputers_configs_id' => $ldap_server->getField('id'),
+                  'plugin_ldapcomputers_states_id' => PluginLdapcomputersState::LDAP_STATUS_NOTFOUND,
                   'date_mod' => ['<', new QueryExpression("date_add(now(), interval - " . $days . " day)")]
                   ]);
 
@@ -530,32 +591,19 @@ class PluginLdapcomputersComputer extends CommonDBTM {
     *
     * @return void
     */
-   static function updateComputerStatus($ldap_computers) {
+   static function updateComputerStatus(PluginLdapcomputersConfig $ldap_server, $ldap_computers) {
       global $DB;
 
       foreach ($ldap_computers as $computer) {
-         self::getAndSync($computer);
+         self::getAndSync($ldap_server, $computer);
       }
 
-      $select = "SELECT
+      $select = "SELECT DISTINCT 
                         `glpi_plugin_ldapcomputers_computers`.`id`            ,
-                        `glpi_plugin_ldapcomputers_computers`.`name`          ,
-                        `lastLogon`                                           ,
-                        `lastLogonTimestamp`                                           ,
-                        `logonCount`                                          ,
-                        `distinguishedName`                                   ,
-                        `dNSHostName`                                         ,
                         `objectGUID`                                          ,
-                        `operatingSystem`                                     ,
-                        `operatingSystemHotfix`                               ,
-                        `operatingSystemServicePack`                          ,
-                        `operatingSystemVersion`                              ,
-                        `whenChanged`                                         ,
-                        `whenCreated`                                         ,
                         `plugin_ldapcomputers_states_id`                      ,
+                        `plugin_ldapcomputers_configs_id`                      ,
                         `is_in_glpi_computers`                                ,
-                        `glpi_plugin_ldapcomputers_computers`.`date_creation` ,
-                        `glpi_plugin_ldapcomputers_computers`.`date_mod`      ,
                         IF ( ISNULL(`glpi_computers`.`name`) ,0 ,1 ) AS inglpi
                 FROM
                         `glpi_plugin_ldapcomputers_computers`
@@ -568,14 +616,15 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       while ($computer = $iterator->next()) {
          $temp_computer = new PluginLdapcomputersComputer();
          $temp_computer->getFromDBByCrit(['objectGUID' => $computer['objectGUID']]);
-
+         $computer['plugin_ldapcomputers_configs_id'] = $ldap_server->getField('id');
          if (!empty($ldap_computers[$computer['objectGUID']])) {
             if ($computer['plugin_ldapcomputers_states_id'] == '') {
                $computer['plugin_ldapcomputers_states_id']  = PluginLdapcomputersState::LDAP_STATUS_ACTIVE;
-            } else if ($temp_computer->getField('is_in_glpi_computers') != $computer['inglpi']) {
+            } 
+            if ($temp_computer->getField('is_in_glpi_computers') != $computer['inglpi']) {
                $computer['is_in_glpi_computers'] = $computer['inglpi'];
             }
-            $temp_computer->update((array)$computer);
+            $temp_computer->update($computer);
             continue;
          } else {
             $computer['plugin_ldapcomputers_states_id'] = PluginLdapcomputersState::LDAP_STATUS_NOTFOUND;
@@ -591,12 +640,14 @@ class PluginLdapcomputersComputer extends CommonDBTM {
     *
     * @return void
     */
-   static function getAndSync($computer) {
+   static function getAndSync(PluginLdapcomputersConfig $ldap_server, $computer) {
       $temp_computer = new PluginLdapcomputersComputer();
-      $computer['lastLogon']          = date('Y-m-d H:i:s', $computer['lastLogon']);
-      $computer['lastLogonTimestamp'] = date('Y-m-d H:i:s', $computer['lastLogonTimestamp']);
-      $computer['whenChanged']        = date('Y-m-d H:i:s', $computer['whenChanged']);
-      $computer['whenCreated']        = date('Y-m-d H:i:s', $computer['whenCreated']);
+      $computer['lastLogon']                       = date('Y-m-d H:i:s', $computer['lastLogon']);
+      $computer['lastLogonTimestamp']              = date('Y-m-d H:i:s', $computer['lastLogonTimestamp']);
+      $computer['whenChanged']                     = date('Y-m-d H:i:s', $computer['whenChanged']);
+      $computer['whenCreated']                     = date('Y-m-d H:i:s', $computer['whenCreated']);
+      $computer['plugin_ldapcomputers_configs_id'] = $ldap_server->getField('id');
+
       if ($temp_computer->getFromDBByCrit(['objectGUID' => $computer['objectGUID']])) {
          // Check for any changes
          if ($temp_computer->getField('name')                      != $computer['name'] ||
@@ -637,7 +688,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
    static function getAllComputers(array $options, &$limitexceeded) {
 
       $ldap_server = new PluginLdapcomputersConfig();
-      $res = $ldap_server->getFromDB($options['primary_ldap_id']);
+      $ldap_server->getFromDB($options['primary_ldap_id']);
 
       $values = [
                   'basedn' => $ldap_server->getField('basedn'),
@@ -654,7 +705,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       $limitexceeded     = false;
 
       // we prevent some delay...
-      if (!$res) {
+      if (!$ldap_server) {
          return false;
       }
       if (isset(self::$conn_cache[$ldap_server->getField('id')])) {
@@ -961,13 +1012,13 @@ class PluginLdapcomputersComputer extends CommonDBTM {
 
       $ldap_server_id = PluginLdapcomputersConfig::getDefault();
       $ldap_server = new PluginLdapcomputersConfig();
-      $config = $ldap_server->getFromDB($ldap_server_id);
-      if (!$config) {
+      $ldap_server->getFromDB($ldap_server_id);
+      if (!$ldap_server) {
          return 0;
       }
 
-      $result = self::deleteOutdatedComputers($ldap_server->getField('retention_date'));
-      if ($result !== false && count($result)) {
+      $result = self::deleteOutdatedComputers($ldap_server);
+      if ($result !== false) {
          $cron_status = 1;
          if (!is_null($task)) {
             $task->addVolume($result);
@@ -1005,8 +1056,9 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       // In automatic task we will retrive computers only from default server
       $ldap_server_id = PluginLdapcomputersConfig::getDefault();
       $ldap_server = new PluginLdapcomputersConfig();
-      $config = $ldap_server->getFromDB($ldap_server_id);
-      if (!$config) {
+      $ldap_server->getFromDB($ldap_server_id);
+
+      if (!$ldap_server) {
          return 0;
       }
       $options['primary_ldap_id'] = $ldap_server_id;
@@ -1014,7 +1066,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       $ldap_computers = self::getAllComputers($options, $limitexceeded);
       if (is_array($ldap_computers)) {
          if (count($ldap_computers) > 0) {
-            self::updateComputerStatus($ldap_computers);
+            self::updateComputerStatus($ldap_server, $ldap_computers);
          }
       }
 
