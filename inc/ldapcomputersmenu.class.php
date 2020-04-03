@@ -58,7 +58,7 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
       $menu['title'] = self::getMenuName();
       $menu['page']  = "$front_ldapcomputers/computer.php";
       $menu['links']['search'] = PluginLdapcomputersComputer::getSearchURL(false);
-      if (PluginLdapcomputersComputer::canCreate()) {
+      if (PluginLdapcomputersComputer::canUpdate()) {
          $menu['links']['add'] = PluginLdapcomputersComputer::getFormURL(false);
          // Add icon for import
          $img = Html::image($CFG_GLPI["root_doc"] . "/plugins/ldapcomputers/pics/import.png",
@@ -68,14 +68,4 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
 
       return $menu;
    }
-
-   static function removeRightsFromSession() {
-      if (isset($_SESSION['glpimenu']['admin']['types']['PluginLdapcomputersLdapcomputersmenu'])) {
-         unset($_SESSION['glpimenu']['admin']['types']['PluginLdapcomputersLdapcomputersmenu']);
-      }
-      if (isset($_SESSION['glpimenu']['admin']['content']['pluginldapcomputersldapcomputersmenu'])) {
-         unset($_SESSION['glpimenu']['admin']['content']['pluginldapcomputersldapcomputersmenu']);
-      }
-   }
-
 }
