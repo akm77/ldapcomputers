@@ -43,15 +43,24 @@ class PluginLdapcomputersProfile extends Profile {
    static $rightname = 'config';
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
-      if ($item->getID() > 0
-              && $item->fields['interface'] == 'central') {
+      if ($item->getType() == 'Profile'
+          && $item->fields['interface'] == 'central') {
          return self::createTabEntry(__('LDAP computers', 'ldapcomputers'));
       }
    }
 
    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
-      $pfProfile = new self();
-      $pfProfile->showForm($item->getID());
+      if ($item->getType() == 'Profile') {
+         $profile = new self();
+         $ID   = $item->getField('id');
+         //In case there's no right datainjection for this profile, create it
+         self::addDefaultProfileInfos(
+             $item->getID(),
+             ['plugin_ldapcomputers_config' => 0, 
+              'plugin_ldapcomputers_view' => 0]
+         );
+         $profile->showForm($ID);
+      }
       return true;
    }
 
@@ -92,8 +101,8 @@ class PluginLdapcomputersProfile extends Profile {
    }
 
    static function uninstallProfile() {
-      $pfProfile = new self();
-      $a_rights = $pfProfile->getAllRights();
+      $profile = new self();
+      $a_rights = $profile->getAllRights();
       foreach ($a_rights as $data) {
          ProfileRight::deleteProfileRights([$data['field']]);
       }
@@ -134,96 +143,6 @@ class PluginLdapcomputersProfile extends Profile {
       foreach ($profile->getAllRights() as $right) {
          self::addDefaultProfileInfos($profiles_id,
                                       [$right['field'] => ALLSTANDARDRIGHT]);
-      }
-   }
-
-   static function removeRights() {
-      $profile = new self();
-      foreach ($profile->getAllRights() as $right) {
-         if (isset($_SESSION['glpiactiveprofile'][$right['field']])) {
-            unset($_SESSION['glpiactiveprofile'][$right['field']]);
-         }
-         ProfileRight::deleteProfileRights([$right['field']]);
-      }
-   }
-
-   static function migrateProfiles() {
-      //Get all rights from the old table
-      $profiles = getAllDatasFromTable(getTableForItemType(__CLASS__));
-
-      //Load mapping of old rights to their new equivalent
-      $oldrights = self::getOldRightsMappings();
-
-      //For each old profile : translate old right the new one
-      foreach ($profiles as $id => $profile) {
-         switch ($profile['right']) {
-            case 'r' :
-               $value = READ;
-               break;
-            case 'w':
-               $value = ALLSTANDARDRIGHT;
-               break;
-            case 0:
-            default:
-               $value = 0;
-               break;
-         }
-         //Write in glpi_profilerights the new fusioninventory right
-         if (isset($oldrights[$profile['type']])) {
-            //There's one new right corresponding to the old one
-            if (!is_array($oldrights[$profile['type']])) {
-               self::addDefaultProfileInfos($profile['profiles_id'],
-                                            [$oldrights[$profile['type']] => $value]);
-            } else {
-               //One old right has been splitted into serveral new ones
-               foreach ($oldrights[$profile['type']] as $newtype) {
-                  self::addDefaultProfileInfos($profile['profiles_id'],
-                                               [$newtype => $value]);
-               }
-            }
-         }
-      }
-   }
-
-   /**
-   * Init profiles during installation :
-   * - add rights in profile table for the current user's profile
-   * - current profile has all rights on the plugin
-   */
-   static function initProfile() {
-      $pfProfile = new self();
-      $profile   = new Profile();
-      $a_rights  = $pfProfile->getAllRights();
-
-      foreach ($a_rights as $data) {
-         if (!countElementsInTable("glpi_profilerights", ['name' => $data['field']])) {
-            ProfileRight::addProfileRights([$data['field']]);
-            $_SESSION['glpiactiveprofile'][$data['field']] = 0;
-         }
-      }
-
-      // Add all rights to current profile of the user
-      if (isset($_SESSION['glpiactiveprofile'])) {
-         $dataprofile       = [];
-         $dataprofile['id'] = $_SESSION['glpiactiveprofile']['id'];
-         $profile->getFromDB($_SESSION['glpiactiveprofile']['id']);
-         foreach ($a_rights as $info) {
-            if (is_array($info)
-                && ((!empty($info['itemtype'])) || (!empty($info['rights'])))
-                  && (!empty($info['label'])) && (!empty($info['field']))) {
-
-               if (isset($info['rights'])) {
-                  $rights = $info['rights'];
-               } else {
-                  $rights = $profile->getRightsFor($info['itemtype']);
-               }
-               foreach (array_keys($rights) as $right) {
-                  $dataprofile['_'.$info['field']][$right] = 1;
-                  $_SESSION['glpiactiveprofile'][$info['field']] = $rights;
-               }
-            }
-         }
-         $profile->update($dataprofile);
       }
    }
 }
