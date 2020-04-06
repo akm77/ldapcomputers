@@ -108,9 +108,9 @@ function plugin_ldapcomputers_install() {
                   KEY `date_mod` (`date_mod`),
                   KEY `name` (`name`),
                   KEY `objectGUID` (`objectGUID`),
-                  KEY `dNSHostName`, (`dNSHostName`),
-                  KEY `plugin_ldapcomputers_states_id`, (`plugin_ldapcomputers_states_id`),
-                  KEY `plugin_ldapcomputers_configs_id`, (`plugin_ldapcomputers_configs_id`)
+                  KEY `dNSHostName` (`dNSHostName`),
+                  KEY `plugin_ldapcomputers_states_id` (`plugin_ldapcomputers_states_id`),
+                  KEY `plugin_ldapcomputers_configs_id` (`plugin_ldapcomputers_configs_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
       $DB->queryOrDie($query, $DB->error());
    }
@@ -267,7 +267,7 @@ function plugin_ldapcomputers_addLeftJoin($type, $ref_table, $new_table, $linkfi
       case "glpi_plugin_ldapcomputers_computers": // From order list
          $out = " LEFT JOIN `glpi_plugin_ldapcomputers_computers`
                      ON glpi_plugin_ldapcomputers_computers.`name` = `glpi_computers`.`name` ";
-      break;            
+      break;
    }
 
    return $out;
