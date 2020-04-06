@@ -219,30 +219,44 @@ function plugin_ldapcomputers_getAddSearchOptions($itemtype) {
         $sopt[3210]['field']         = 'name';
         $sopt[3210]['linkfield']     = '';
         $sopt[3210]['name']          = "LDAP " . __("Name");
-        $sopt[3210]['joinparams']  = ['jointype' => 'child'];
+        $sopt[3210]['joinparams']    = ['jointype' => 'child'];
         $sopt[3210]['forcegroupby']  = true;
 
-        $sopt[3211]['table']         = 'glpi_plugin_ldapcomputers_computers';
-        $sopt[3211]['field']         = 'lastLogon';
-        $sopt[3211]['linkfield']     = '';
-        $sopt[3211]['name']          = "LDAP " . __('Last logon', 'ldapcomputers');
-        $sopt[3211]['joinparams']  = ['jointype' => 'child'];
-        $sopt[3211]['forcegroupby']  = true;
-        $sopt[3211]['datatype']      = 'datetime';
+        $sopt[3220]['table']         = 'glpi_plugin_ldapcomputers_computers';
+        $sopt[3220]['field']         = 'lastLogon';
+        $sopt[3220]['linkfield']     = '';
+        $sopt[3220]['name']          = "LDAP " . __('Last logon', 'ldapcomputers');
+        $sopt[3220]['joinparams']    = ['jointype' => 'child'];
+        $sopt[3220]['forcegroupby']  = true;
+        $sopt[3220]['datatype']      = 'datetime';
 
-        $sopt[3212]['table']         = 'glpi_plugin_ldapcomputers_computers';
-        $sopt[3212]['field']         = 'distinguishedName';
-        $sopt[3212]['linkfield']     = '';
-        $sopt[3212]['name']          = "LDAP " . __('Distinguished name', 'ldapcomputers');
-        $sopt[3212]['joinparams']  = ['jointype' => 'child'];
-        $sopt[3212]['forcegroupby']  = true;
+        $sopt[3230]['table']         = 'glpi_plugin_ldapcomputers_configs';
+        $sopt[3230]['field']         = 'name';
+        $sopt[3230]['linkfield']     = '';
+        $sopt[3230]['name']          = "LDAP " . __('LDAP directory');
+        $sopt[3230]['joinparams']    = ['beforejoin' => [
+                                          'table'      => 'glpi_plugin_ldapcomputers_computers',
+                                          'joinparams' => [
+                                             'jointype' => 'child'
+                                              ]
+                                           ]
+                                       ];
+        $sopt[3220]['datatype']      = 'text';
+        $sopt[3230]['forcegroupby']  = true;
 
-        $sopt[3213]['table']         = 'glpi_plugin_ldapcomputers_computers';
-        $sopt[3213]['field']         = 'operatingSystem';
-        $sopt[3213]['linkfield']     = '';
-        $sopt[3213]['name']          = "LDAP " . __('OS', 'ldapcomputers');
-        $sopt[3213]['joinparams']  = ['jointype' => 'child'];
-        $sopt[3213]['forcegroupby']  = true;
+        $sopt[3240]['table']         = 'glpi_plugin_ldapcomputers_computers';
+        $sopt[3240]['field']         = 'distinguishedName';
+        $sopt[3240]['linkfield']     = '';
+        $sopt[3240]['name']          = "LDAP " . __('Distinguished name', 'ldapcomputers');
+        $sopt[3240]['joinparams']    = ['jointype' => 'child'];
+        $sopt[3240]['forcegroupby']  = true;
+
+        $sopt[3250]['table']         = 'glpi_plugin_ldapcomputers_computers';
+        $sopt[3250]['field']         = 'operatingSystem';
+        $sopt[3250]['linkfield']     = '';
+        $sopt[3250]['name']          = "LDAP " . __('OS', 'ldapcomputers');
+        $sopt[3250]['joinparams']    = ['jointype' => 'child'];
+        $sopt[3250]['forcegroupby']  = true;
    }
    return $sopt;
 }
@@ -252,8 +266,8 @@ function plugin_ldapcomputers_addLeftJoin($type, $ref_table, $new_table, $linkfi
    switch ($new_table) {
       case "glpi_plugin_ldapcomputers_computers": // From order list
          $out = " LEFT JOIN `glpi_plugin_ldapcomputers_computers`
-                     ON `glpi_plugin_ldapcomputers_computers`.`name` = `glpi_computers`.`name` ";
-         break;
+                     ON glpi_plugin_ldapcomputers_computers.`name` = `glpi_computers`.`name` ";
+      break;            
    }
 
    return $out;
