@@ -7,9 +7,9 @@
    <description>
       <short>
          <!-- Add as many lang tag you want -->
-         <en>LDAP computers - GLPI plugin</en>
+         <en>LDAP computers    - GLPI plugin</en>
          <pt>Computadores LDAP - GLPI plugin</pt>
-         <ru>LDAP computers - плагин для GLPI</ru>
+         <ru>LDAP computers    - плагин для GLPI</ru>
       </short>
       <long>
          <!-- Add as many lang tag you want -->
