@@ -354,7 +354,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
     *
     * @return boolean true if maxPageSize can be used, false otherwise
     */
-   static function isLdapPageSizeAvailable($config_ldap, $check_config_value = true) {
+    static function isLdapPageSizeAvailable($config_ldap, $check_config_value = true) {
       return ((!$check_config_value
                || ($check_config_value && $config_ldap->fields['can_support_pagesize']))
                   && function_exists('ldap_control_paged_result')
