@@ -74,10 +74,9 @@ class PluginLdapcomputersConfig extends CommonDBTM {
 
    function post_getEmpty() {
       $this->fields['port']                        = '389';
-      $this->fields['condition']                   = '';
+      $this->fields['condition']                   = '(objectCategory=computer)';
       $this->fields['use_tls']                     = 0;
       $this->fields['comment_field']               = '';
-      $this->fields['use_dn']                      = 0;
    }
 
    static public function unsetUndisclosedFields(&$fields) {
@@ -98,11 +97,11 @@ class PluginLdapcomputersConfig extends CommonDBTM {
             $this->fields['condition']
                = '(&(&(&(samAccountType=805306369)(!(primaryGroupId=516)))(objectCategory=computer)(!(operatingSystem=Windows Server*))))';
             $this->fields['use_tls']                   = 0;
-            $this->fields['use_dn']                    = 1;
+            $this->fields['comment_field']             = '';
             $this->fields['can_support_pagesize']      = 1;
             $this->fields['pagesize']                  = '1000';
             break;
-         default:
+         default: 
             $this->post_getEmpty();
       }
    }
@@ -233,7 +232,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          echo "</td></tr>";
          //Fill fields when using preconfiguration models
          if (!$ID) {
-            $hidden_fields = ['comment_field', 'condition', 'port', 'use_dn', 'use_tls'];
+            $hidden_fields = ['port', 'condition', 'use_tls', 'comment_field', 'can_support_pagesize', 'pagesize'];
             foreach ($hidden_fields as $hidden_field) {
                echo "<input type='hidden' name='$hidden_field' value='".
                       $this->fields[$hidden_field]."'>";
