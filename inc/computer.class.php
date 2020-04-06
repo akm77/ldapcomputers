@@ -121,13 +121,14 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          echo "<div class='center'>";
          echo "<table class='tab_cadre_fixehov'>";
          echo "<tr class='noHover'>".
-              "<th colspan='7'>".__('List of LDAP computers', 'ldapcomputers') . "</th></tr>";
+              "<th colspan='8'>".__('List of LDAP computers', 'ldapcomputers') . "</th></tr>";
 
          $header_begin   = "<tr>";
          $header_top     = "<th class='center b'>" . __('Last logon', 'ldapcomputers') . "</th>";
          $header_bottom  = "<th class='center b'>" . __('Last logon', 'ldapcomputers') . "</th>";
          $header_end     = "<th class='center b'>" . __('Logon count', 'ldapcomputers') . "</th>" .
                            "<th class='center'>"   . __('LDAP computer status', 'ldapcomputers') . "</th>" .
+                           "<th class='center b'>" . __('LDAP directory') ."</th>".
                            "<th class='center b'>" . __('Distinguished name', 'ldapcomputers') ."</th>".
                            "<th class='center b'>" . __('OS', 'ldapcomputers') ."</th>".
                            "<th class='center b'>" . __('OS version', 'ldapcomputers') ."</th>".
@@ -141,6 +142,8 @@ class PluginLdapcomputersComputer extends CommonDBTM {
             echo "<td class='center'>" . $computer["logonCount"] . "</td>";
             echo "<td class='center'>" . Dropdown::getDropdownName('glpi_plugin_ldapcomputers_states',
                                          $computer["plugin_ldapcomputers_states_id"])  . "</td>";
+            echo "<td class='center'>" . Dropdown::getDropdownName('glpi_plugin_ldapcomputers_configs',
+                                         $computer["plugin_ldapcomputers_configs_id"])  . "</td>";
             echo "<td class='center'>" . "<a href=\"" . self::getFormURLWithID($computer["id"]) ."\">".
                                          $computer["distinguishedName"] . "</a>" . "</td>";
             echo "<td class='center'>" . $computer["operatingSystem"] . "</td>";
