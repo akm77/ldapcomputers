@@ -115,6 +115,20 @@ function plugin_ldapcomputers_install() {
       $DB->queryOrDie($query, $DB->error());
    }
 
+   //Create computers table only if it does not exists yet!
+   if (!$DB->tableExists('glpi_plugin_ldapcomputers_states')) {
+      $query = 'CREATE TABLE `glpi_plugin_ldapcomputers_states` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `name` varchar(255) NOT NULL,
+                  `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
+                  `date_creation` datetime NOT NULL,
+                  `date_mod` datetime NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `name` (`name`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
+      $DB->queryOrDie($query, $DB->error());
+   }
+
    /* Placeholder for further update process in future
    */
 
