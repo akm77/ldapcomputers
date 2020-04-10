@@ -76,7 +76,7 @@ msgstr "OS version"
 
 #: inc/computer.class.php:190 inc/computer.class.php:284
 msgid "Object GUID"
-msgstr "Object GUID"
+msgstr "Objecto GUID"
 
 #: inc/computer.class.php:202 inc/computer.class.php:308
 msgid "OS servicepack"
@@ -88,19 +88,19 @@ msgstr "OS hotfix"
 
 #: inc/computer.class.php:210 inc/computer.class.php:324
 msgid "When changed"
-msgstr "When changed"
+msgstr "Alterado em"
 
 #: inc/computer.class.php:213 inc/computer.class.php:332
 msgid "When created"
-msgstr "When created"
+msgstr "Criado em"
 
 #: inc/computer.class.php:218
 msgid "Computer status in LDAP"
-msgstr "Computer status in LDAP"
+msgstr "Estado do computador no LDAP"
 
 #: inc/computer.class.php:225
 msgid "GLPI presence"
-msgstr "Presento no GLPI"
+msgstr "Presença no GLPI"
 
 #: inc/computer.class.php:389 inc/ldapcomputersmenu.class.php:65
 msgid "Get computers"
@@ -108,32 +108,32 @@ msgstr "Obter computadorers"
 
 #: inc/computer.class.php:478 inc/computer.class.php:481
 msgid "No computers to be imported"
-msgstr "No computers to be imported"
+msgstr "Nenhum computador a ser importado"
 
 #: inc/computer.class.php:850
 msgid "Delete outdated computers"
-msgstr "Delete outdated computers"
+msgstr "Excluir computadores desatualizados"
 
 #: inc/computer.class.php:854
 msgid "Get computers from LDAP"
-msgstr "Get computers from LDAP"
+msgstr "Obter computadores do LDAP"
 
 #: inc/config.class.php:317
 msgid "How long to keep outdated computers"
-msgstr "How long to keep outdated computers"
+msgstr "Quanto tempo mantém computadores desatualizados"
 
 #: inc/config.class.php:499
 msgid "Delete after days"
-msgstr "Delete after days"
+msgstr "Excluir após dias"
 
 #: inc/configmenu.class.php:47 inc/profile.class.php:105
 msgid "LDAP computers config"
-msgstr "LDAP computers config"
+msgstr "Configuração de computadores LDAP"
 
 #: inc/profile.class.php:48 inc/profile.class.php:81
 msgid "LDAP computers"
-msgstr "LDAP computers"
+msgstr "Computadores LDAP"
 
 #: setup.php:146
 msgid "Installed / not configured"
-msgstr "Installed / not configured"
+msgstr "Instalado / não configurado"
