@@ -39,6 +39,8 @@
  --------------------------------------------------------------------------
  */
 
+use Glpi\Toolbox\Sanitizer;
+
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
 }
@@ -524,7 +526,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
           $ds = self::$conn_cache[$ldap_server->getField('id')];
       } else {
          $ds = PluginLdapcomputersLdap::connectToServer($ldap_server->getField('host'), $ldap_server->getField('port'), $ldap_server->getField('rootdn'),
-                                                        Toolbox::decrypt($ldap_server->getField('rootdn_passwd'), GLPIKEY),
+														(new GLPIKey())->decrypt($ldap_server->getField('rootdn_passwd')),
                                                         $ldap_server->getField('use_tls'), $ldap_server->getField('deref_option'));
       }
       if ($ds) {
@@ -715,7 +717,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
          $ds = self::$conn_cache[$ldap_server->getField('id')];
       } else {
            $ds = PluginLdapcomputersLdap::connectToServer($ldap_server->getField('host'), $ldap_server->getField('port'), $ldap_server->getField('rootdn'),
-                                                          Toolbox::decrypt($ldap_server->getField('rootdn_passwd'), GLPIKEY),
+														  (new GLPIKey())->decrypt($ldap_server->getField('rootdn_passwd')),
                                                           $ldap_server->getField('use_tls'), $ldap_server->getField('deref_option'));
       }
 
@@ -767,7 +769,7 @@ class PluginLdapcomputersComputer extends CommonDBTM {
       $count    = 0;  //Store the number of results ldap_search
 
       do {
-         $filter = Toolbox::unclean_cross_side_scripting_deep(Toolbox::stripslashes_deep($filter));
+         $filter = Sanitizer::unsanitize(Toolbox::stripslashes_deep($filter));
 
          if (PluginLdapcomputersLdap::isLdapPageSizeAvailable($config_ldap)) {
             if (version_compare(PHP_VERSION, '7.3') < 0) {

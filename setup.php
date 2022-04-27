@@ -39,11 +39,11 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.4.1');
+define('PLUGIN_LDAPCOMPUTERS_VERSION', '0.5.0');
 // Minimal GLPI version, inclusive
-define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '9.2');
+define('PLUGIN_LDAPCOMPUTERS_MIN_GLPI', '10.0');
 // Maximum GLPI version, exclusive
-define('PLUGIN_LDAPCOMPUTERS_MAX_GLPI', '9.5');
+define('PLUGIN_LDAPCOMPUTERS_MAX_GLPI', '10.1');
 
 /**
  * Init hooks of the plugin.
