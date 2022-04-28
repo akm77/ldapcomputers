@@ -7,8 +7,9 @@
         "secure-http":false,
         "disable-tls":true,
         "platform": {
-            "php": "5.6"
-        }
+            "php": "7.4"
+        },
+		"process-timeout":1000
     },
     "repositories":[
         {
@@ -17,6 +18,6 @@
         }
     ],
     "require": {
-        "glpi-project/tools": "^0.1.8"
+        "glpi-project/tools": "^0.4.5"
     }
 }

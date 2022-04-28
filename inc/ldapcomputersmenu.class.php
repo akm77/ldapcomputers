@@ -65,6 +65,7 @@ class PluginLdapcomputersLdapcomputersmenu extends CommonGLPI {
                                       ['alt' => __('Get computers', 'ldapcomputers'), 'width' => '16', 'height' => '16']);
          $menu['links'][$img] = "$front_ldapcomputers/ldap.import.php";
       }
+      $menu['icon'] = "ti ti-list-search";
 
       return $menu;
    }

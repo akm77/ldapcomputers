@@ -180,7 +180,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
          return false;
       }
       $ds = self::connectToServer($ldap_method['host'], $ldap_method['port'], $ldap_method['rootdn'],
-                                  Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
+								  (new GLPIKey())->decrypt($ldap_method['rootdn_passwd']),
                                   $ldap_method['use_tls'], $ldap_method['deref_option']);
       // Test with login and password of the user if exists
       if (!$ds && !empty($login)) {
@@ -192,7 +192,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
       if (!$ds && ($ldap_method['id'] > 0)) {
          foreach (PluginLdapcomputersConfig::getAllBackupsForAMaster($ldap_method['id']) as $backup_ldap) {
             $ds = self::connectToServer($backup_ldap["host"], $backup_ldap["port"], $ldap_method['rootdn'],
-                                        Toolbox::decrypt($ldap_method['rootdn_passwd'], GLPIKEY),
+										(new GLPIKey())->decrypt($ldap_method['rootdn_passwd']),
                                         $ldap_method['use_tls'], $ldap_method['deref_option']);
             // Test with login and password of the user
             if (!$ds && !empty($login)) {
@@ -236,7 +236,7 @@ class PluginLdapcomputersLdap extends CommonDBTM {
          $port = $config_ldap->fields['port'];
       }
       $ds = self::connectToServer($host, $port, $config_ldap->fields['rootdn'],
-                                  Toolbox::decrypt($config_ldap->fields['rootdn_passwd'], GLPIKEY),
+								  (new GLPIKey())->decrypt($config_ldap->fields['rootdn_passwd']),
                                   $config_ldap->fields['use_tls'], $config_ldap->fields['deref_option']);
       if ($ds) {
          return true;

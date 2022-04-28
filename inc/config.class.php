@@ -111,8 +111,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          if (empty($input["rootdn_passwd"])) {
             unset($input["rootdn_passwd"]);
          } else {
-            $input["rootdn_passwd"] = Toolbox::encrypt(stripslashes($input["rootdn_passwd"]),
-                                                       GLPIKEY);
+            $input["rootdn_passwd"] = (new GLPIKey())->encrypt(stripslashes($input["rootdn_passwd"]));
          }
       }
       if (isset($input["_blank_passwd"]) && $input["_blank_passwd"]) {
@@ -718,7 +717,7 @@ class PluginLdapcomputersConfig extends CommonDBTM {
          $input['is_default'] = 1;
       }
       if (isset($input["rootdn_passwd"]) && !empty($input["rootdn_passwd"])) {
-         $input["rootdn_passwd"] = Toolbox::encrypt(stripslashes($input["rootdn_passwd"]), GLPIKEY);
+         $input["rootdn_passwd"] = (new GLPIKey())->encrypt(stripslashes($input["rootdn_passwd"]));
       }
       return $input;
    }

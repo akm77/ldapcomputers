@@ -62,6 +62,7 @@ class PluginLdapcomputersConfigmenu extends CommonGLPI {
       if (PluginLdapcomputersConfig::canCreate()) {
          $menu['links']['add'] = PluginLdapcomputersConfig::getFormURL(false);
       }
+      $menu['icon'] = "ti ti-address-book";
       return $menu;
    }
 }
